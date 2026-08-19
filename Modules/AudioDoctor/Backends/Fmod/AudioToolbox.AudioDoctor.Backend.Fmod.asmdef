@@ -1,0 +1,23 @@
+{
+    "name": "AudioToolbox.AudioDoctor.Backend.Fmod",
+    "rootNamespace": "AudioToolbox.AudioDoctor.Backends.Fmod",
+    "references": [
+        "AudioToolbox.AudioDoctor.Core",
+        "AudioToolbox.AudioDoctor.Editor",
+        "FMODUnity",
+        "FMODUnityEditor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "AUDIOTOOLBOX_FMOD"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

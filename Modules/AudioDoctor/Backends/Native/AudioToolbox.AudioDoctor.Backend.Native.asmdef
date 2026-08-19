@@ -1,0 +1,19 @@
+{
+    "name": "AudioToolbox.AudioDoctor.Backend.Native",
+    "rootNamespace": "AudioToolbox.AudioDoctor.Backends.Native",
+    "references": [
+        "AudioToolbox.AudioDoctor.Core",
+        "AudioToolbox.AudioDoctor.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

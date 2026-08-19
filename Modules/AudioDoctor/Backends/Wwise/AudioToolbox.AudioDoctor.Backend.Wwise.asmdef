@@ -1,0 +1,21 @@
+{
+    "name": "AudioToolbox.AudioDoctor.Backend.Wwise",
+    "rootNamespace": "AudioToolbox.AudioDoctor.Backends.Wwise",
+    "references": [
+        "AudioToolbox.AudioDoctor.Core",
+        "AudioToolbox.AudioDoctor.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "AUDIOTOOLBOX_WWISE"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

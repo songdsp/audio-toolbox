@@ -1,0 +1,19 @@
+{
+    "name": "AudioToolbox.AudioDoctor.Editor",
+    "rootNamespace": "AudioToolbox.AudioDoctor.Editor",
+    "references": [
+        "AudioToolbox.Editor",
+        "AudioToolbox.AudioDoctor.Core"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

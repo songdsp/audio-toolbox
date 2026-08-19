@@ -1,0 +1,332 @@
+/*
+ * AudioDoctor diagnostics window.
+ *
+ * Severity is encoded twice on every row - a colour stripe and a text badge -
+ * so the list stays readable for a colour-blind reader and in a screenshot.
+ * The palette is defined for both editor skins; nothing here relies on the
+ * default skin being dark.
+ */
+
+.root {
+    flex-grow: 1;
+    --ad-error: #d13438;
+    --ad-warning: #b26a00;
+    --ad-info: #5a6570;
+    --ad-surface: #e4e4e4;
+    --ad-surface-alt: #efefef;
+    --ad-border: #c8c8c8;
+    --ad-text-dim: #5a5a5a;
+}
+
+.root.dark {
+    --ad-error: #ff6369;
+    --ad-warning: #ffb224;
+    --ad-info: #8b949e;
+    --ad-surface: #383838;
+    --ad-surface-alt: #303030;
+    --ad-border: #232323;
+    --ad-text-dim: #a0a0a0;
+}
+
+/* ---------------------------------------------------------------- toolbar */
+
+.toolbar {
+    height: 22px;
+}
+
+.run-button {
+    -unity-font-style: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.toolbar-spacer {
+    flex-grow: 1;
+}
+
+.toolbar-menu {
+    min-width: 90px;
+}
+
+.search-field {
+    width: 180px;
+}
+
+/* ---------------------------------------------------------------- summary */
+
+.summary {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    background-color: var(--ad-surface-alt);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--ad-border);
+}
+
+.summary-counts {
+    flex-direction: row;
+}
+
+/* Counts double as filters: clicking one hides that severity. */
+.chip {
+    flex-direction: row;
+    margin-right: 6px;
+    padding: 2px 9px;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: var(--ad-border);
+    background-color: rgba(127, 127, 127, 0.12);
+    -unity-font-style: bold;
+    font-size: 11px;
+}
+
+.chip--error { color: var(--ad-error); }
+.chip--warning { color: var(--ad-warning); }
+.chip--info { color: var(--ad-info); }
+
+.chip--muted {
+    opacity: 0.4;
+    -unity-font-style: normal;
+}
+
+.summary-meta {
+    align-items: flex-end;
+}
+
+.summary-scope {
+    font-size: 11px;
+    color: var(--ad-text-dim);
+}
+
+.summary-backend {
+    font-size: 11px;
+    color: var(--ad-text-dim);
+    -unity-font-style: bold;
+}
+
+/* ------------------------------------------------------------ empty state */
+
+.empty-state {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.empty-title {
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-bottom: 6px;
+}
+
+.empty-body {
+    font-size: 11px;
+    color: var(--ad-text-dim);
+    max-width: 420px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+/* -------------------------------------------------------------- list rows */
+
+.list-pane {
+    flex-grow: 1;
+    min-width: 320px;
+}
+
+.issue-list {
+    flex-grow: 1;
+}
+
+.row {
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+    padding-right: 6px;
+}
+
+.row-stripe {
+    width: 3px;
+    height: 100%;
+    margin-right: 7px;
+}
+
+.row-stripe--error { background-color: var(--ad-error); }
+.row-stripe--warning { background-color: var(--ad-warning); }
+.row-stripe--info { background-color: var(--ad-info); }
+
+.row-badge {
+    width: 38px;
+    font-size: 10px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+}
+
+.row-badge--error { color: var(--ad-error); }
+.row-badge--warning { color: var(--ad-warning); }
+.row-badge--info { color: var(--ad-info); }
+
+.row-text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: hidden;
+}
+
+.row-message {
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.row-path {
+    font-size: 10px;
+    color: var(--ad-text-dim);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ----------------------------------------------------------- group header */
+
+.group-header {
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+    padding-left: 4px;
+    background-color: var(--ad-surface);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--ad-border);
+}
+
+.group-arrow {
+    width: 14px;
+    font-size: 9px;
+    color: var(--ad-text-dim);
+    -unity-text-align: middle-center;
+}
+
+.group-label {
+    -unity-font-style: bold;
+    font-size: 11px;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.group-count {
+    font-size: 10px;
+    color: var(--ad-text-dim);
+    margin-right: 6px;
+}
+
+/* ------------------------------------------------------------ detail pane */
+
+.detail-pane {
+    min-width: 240px;
+    background-color: var(--ad-surface-alt);
+    border-left-width: 1px;
+    border-left-color: var(--ad-border);
+}
+
+.detail-scroll {
+    flex-grow: 1;
+}
+
+.detail-placeholder {
+    margin: 16px 12px;
+    font-size: 11px;
+    color: var(--ad-text-dim);
+    white-space: normal;
+}
+
+.detail-body {
+    padding: 10px 12px;
+}
+
+.detail-rule {
+    font-size: 10px;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+}
+
+.detail-title {
+    font-size: 13px;
+    -unity-font-style: bold;
+    white-space: normal;
+    margin-bottom: 10px;
+}
+
+.detail-section-label {
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: var(--ad-text-dim);
+    margin-top: 10px;
+    margin-bottom: 2px;
+}
+
+.detail-text {
+    font-size: 11px;
+    white-space: normal;
+}
+
+.detail-path {
+    font-size: 11px;
+    white-space: normal;
+    color: var(--ad-text-dim);
+}
+
+.detail-actions {
+    flex-direction: row;
+    margin-top: 12px;
+}
+
+.detail-actions > Button {
+    margin-right: 4px;
+}
+
+/* --------------------------------------------------------- skipped checks */
+
+.skipped-section {
+    border-top-width: 1px;
+    border-top-color: var(--ad-border);
+    background-color: var(--ad-surface-alt);
+    max-height: 190px;
+    flex-shrink: 0;
+}
+
+.skipped-foldout {
+    padding: 4px 6px;
+}
+
+.skipped-preamble {
+    font-size: 10px;
+    color: var(--ad-text-dim);
+    white-space: normal;
+    margin: 2px 0 6px 14px;
+    max-width: 720px;
+}
+
+.skipped-list {
+    margin-left: 14px;
+}
+
+.skipped-row {
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 3px;
+}
+
+.skipped-rule {
+    width: 42px;
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: var(--ad-text-dim);
+}
+
+.skipped-reason {
+    flex-grow: 1;
+    flex-shrink: 1;
+    font-size: 10px;
+    white-space: normal;
+    color: var(--ad-text-dim);
+}

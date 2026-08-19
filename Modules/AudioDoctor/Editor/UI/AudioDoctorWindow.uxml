@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="root" class="root">
+
+        <uie:Toolbar name="toolbar" class="toolbar">
+            <uie:ToolbarButton name="run-button" text="Run Validation" class="run-button" />
+            <uie:ToolbarMenu name="backend-menu" text="Backend: Auto" class="toolbar-menu" />
+            <ui:VisualElement class="toolbar-spacer" />
+            <uie:ToolbarMenu name="group-menu" text="Group: Severity" class="toolbar-menu" />
+            <uie:ToolbarSearchField name="search-field" class="search-field" />
+            <uie:ToolbarButton name="export-button" text="Export" class="toolbar-menu" />
+        </uie:Toolbar>
+
+        <ui:VisualElement name="summary" class="summary">
+            <ui:VisualElement class="summary-counts">
+                <ui:Button name="chip-error" class="chip chip--error" />
+                <ui:Button name="chip-warning" class="chip chip--warning" />
+                <ui:Button name="chip-info" class="chip chip--info" />
+            </ui:VisualElement>
+            <ui:VisualElement class="summary-meta">
+                <ui:Label name="summary-scope" class="summary-scope" />
+                <ui:Label name="summary-backend" class="summary-backend" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="empty-state" class="empty-state">
+            <ui:Label name="empty-title" class="empty-title" />
+            <ui:Label name="empty-body" class="empty-body" />
+        </ui:VisualElement>
+
+        <ui:TwoPaneSplitView name="split" fixed-pane-index="1"
+                             fixed-pane-initial-dimension="320" orientation="Horizontal">
+            <ui:VisualElement name="list-pane" class="list-pane">
+                <ui:ListView name="issue-list" class="issue-list" />
+            </ui:VisualElement>
+            <ui:VisualElement name="detail-pane" class="detail-pane">
+                <ui:ScrollView name="detail-scroll" class="detail-scroll">
+                    <ui:Label name="detail-placeholder" class="detail-placeholder"
+                              text="Select a finding to see what it means and how to fix it." />
+                    <ui:VisualElement name="detail-body" class="detail-body" />
+                </ui:ScrollView>
+            </ui:VisualElement>
+        </ui:TwoPaneSplitView>
+
+        <ui:VisualElement name="skipped-section" class="skipped-section">
+            <ui:Foldout name="skipped-foldout" text="Checks that did not run" class="skipped-foldout">
+                <ui:Label name="skipped-preamble" class="skipped-preamble"
+                          text="These were skipped, so a clean result above does not cover them. This is the difference between &quot;nothing is wrong&quot; and &quot;nothing was checked&quot;." />
+                <ui:VisualElement name="skipped-list" class="skipped-list" />
+            </ui:Foldout>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>
