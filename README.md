@@ -12,6 +12,7 @@ so the ones you do not use cost disk space and nothing else.
 | | | Status |
 |---|---|---|
 | **[AudioDoctor](Documentation~/AudioDoctor.md)** | Static validation for audio pipelines — reconciles what the middleware declares, what the banks contain and what the project references, then reports the gaps | v0.1 |
+| **[EventTracer](Documentation~/EventTracer.md)** | Runtime tracing — records every sound posted through its facade and tells the seven ways one can fail to be heard apart from each other | v0.2 · FMOD |
 
 ## Install
 
@@ -51,12 +52,18 @@ If detection ever gets out of step — after installing a middleware without
 letting the editor reload, say — **Window → Audio Toolbox → Re-detect
 Middleware** forces a re-check.
 
+**`AUDIOTOOLBOX_TRACE` is opt-in and stays that way.** It compiles in
+EventTracer's collection layer. Unlike middleware presence, that is a decision
+about a build rather than a fact about the project, so nothing sets it for you:
+**Window → Audio Toolbox → EventTracer → Record Traces**.
+
 ## Layout
 
 ```
 Editor/                  toolbox-wide infrastructure shared by every module
 Modules/<Name>/          one module: Runtime, Editor, Backends, Tests
 Documentation~/<Name>.md one document per module
+Tools/<Name>~/           scripts run outside Unity; the ~ keeps them out of the importer
 ```
 
 Assemblies are named `AudioToolbox.<Module>.<Layer>`. A module's tests depend on

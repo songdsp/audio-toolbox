@@ -1,0 +1,19 @@
+{
+    "name": "AudioToolbox.EventTracer.Editor",
+    "rootNamespace": "AudioToolbox.EventTracer.Editor",
+    "references": [
+        "AudioToolbox.Editor",
+        "AudioToolbox.EventTracer.Core"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

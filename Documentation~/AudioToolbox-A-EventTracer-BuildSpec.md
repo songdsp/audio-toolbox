@@ -1,4 +1,4 @@
-# AudioDoctor · 模块 A：运行时事件追踪（Trace）
+# AudioToolbox · 模块 A：运行时事件追踪（Trace）
 
 > 版本 0.1 · 单人开发 · 依赖模块 C 的 Core 数据模型
 
@@ -27,7 +27,7 @@
 |---|---|---|
 | 引擎 | Unity 2022.3 LTS | 与模块 C 保持一致 |
 | 采集层 | Runtime 程序集，C# struct + 环形缓冲 | 必须进包；必须零 GC |
-| 条件编译 | `AUDIODOCTOR_TRACE` | 关闭时采集层编译为空，Release 包无残留 |
+| 条件编译 | `AUDIOTOOLKIT_TRACE` | 关闭时采集层编译为空，Release 包无残留 |
 | 落盘 | 二进制格式，写入 `Application.persistentDataPath` | 体积可控；QA 可直接取走 |
 | UI | UI Toolkit `ListView`（虚拟化） | 一次会话动辄数万条记录，IMGUI 扛不住 |
 | 调用点采集 | `[CallerFilePath]` / `[CallerLineNumber]` | 编译期常量，运行时零开销，优于抓调用栈 |
@@ -36,13 +36,13 @@
 ### 2.1 程序集划分
 
 ```
-AudioDoctor.Core              Runtime  与模块 C 共用
-AudioDoctor.Trace             Runtime  门面、环形缓冲、序列化
-AudioDoctor.Trace.Fmod        Runtime  Define Constraint: AUDIODOCTOR_FMOD
-AudioDoctor.Trace.Wwise       Runtime  Define Constraint: AUDIODOCTOR_WWISE
-AudioDoctor.Trace.Native      Runtime  兜底后端
-AudioDoctor.Trace.Editor      Editor   时间轴窗口、日志导入
-AudioDoctor.Trace.Tests       Runtime  PlayMode 测试
+AudioToolbox.Core              Runtime  与模块 C 共用
+AudioToolbox.Trace             Runtime  门面、环形缓冲、序列化
+AudioToolbox.Trace.Fmod        Runtime  Define Constraint: AUDIOTOOLKIT_FMOD
+AudioToolbox.Trace.Wwise       Runtime  Define Constraint: AUDIOTOOLKIT_WWISE
+AudioToolbox.Trace.Native      Runtime  兜底后端
+AudioToolbox.Trace.Editor      Editor   时间轴窗口、日志导入
+AudioToolbox.Trace.Tests       Runtime  PlayMode 测试
 ```
 
 ### 2.2 核心数据模型
@@ -168,7 +168,7 @@ Wwise 侧的 Virtualized 覆盖度弱于 FMOD，这一点必须如实写进支�
 | 200 并发事件下每帧总开销 | < 0.5 ms |
 | 环形缓冲常驻内存 | < 8 MB（默认 5 万条） |
 | 10 分钟会话日志体积 | < 20 MB |
-| `AUDIODOCTOR_TRACE` 关闭时的运行时开销 | 0（编译期消除） |
+| `AUDIOTOOLKIT_TRACE` 关闭时的运行时开销 | 0（编译期消除） |
 
 超出预算即视为 Phase 未完成，不得进入下一阶段。
 
@@ -216,7 +216,7 @@ Wwise 侧的 Virtualized 覆盖度弱于 FMOD，这一点必须如实写进支�
 | 1 | 七种 Outcome 在 FMOD 后端全部被正确区分 | 100%，对照 §5.3 |
 | 2 | 采集层每帧 GC 分配 | 0 B |
 | 3 | 200 并发事件下每帧开销 | < 0.5 ms |
-| 4 | `AUDIODOCTOR_TRACE` 关闭时的构建产物中无采集层代码 | IL 检查确认 |
+| 4 | `AUDIOTOOLKIT_TRACE` 关闭时的构建产物中无采集层代码 | IL 检查确认 |
 | 5 | 10 分钟会话日志体积 | < 20 MB |
 | 6 | 从打包构建导出的日志可在编辑器完整还原 | 通过 |
 | 7 | 环形缓冲溢出时有明确告警，不静默丢数据 | 通过 |

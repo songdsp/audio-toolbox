@@ -1,0 +1,26 @@
+{
+    "name": "AudioToolbox.EventTracer.Tests.PlayMode.Fmod",
+    "rootNamespace": "AudioToolbox.EventTracer.Tests.Fmod",
+    "references": [
+        "AudioToolbox.EventTracer.Core",
+        "AudioToolbox.EventTracer.TestSupport",
+        "AudioToolbox.EventTracer.Backend.Fmod",
+        "FMODUnity",
+        "UnityEngine.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "AUDIOTOOLBOX_FMOD",
+        "AUDIOTOOLBOX_TRACE"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

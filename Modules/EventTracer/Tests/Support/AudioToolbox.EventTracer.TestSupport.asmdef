@@ -1,0 +1,18 @@
+{
+    "name": "AudioToolbox.EventTracer.TestSupport",
+    "rootNamespace": "AudioToolbox.EventTracer.TestSupport",
+    "references": [
+        "AudioToolbox.EventTracer.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

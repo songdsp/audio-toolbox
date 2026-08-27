@@ -1,0 +1,19 @@
+{
+    "name": "AudioToolbox.EventTracer.Backend.Fmod",
+    "rootNamespace": "AudioToolbox.EventTracer.Backends.Fmod",
+    "references": [
+        "AudioToolbox.EventTracer.Core",
+        "FMODUnity"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "AUDIOTOOLBOX_FMOD"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

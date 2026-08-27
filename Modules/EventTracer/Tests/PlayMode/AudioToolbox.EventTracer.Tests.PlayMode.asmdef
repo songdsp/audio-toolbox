@@ -1,0 +1,22 @@
+{
+    "name": "AudioToolbox.EventTracer.Tests.PlayMode",
+    "rootNamespace": "AudioToolbox.EventTracer.Tests",
+    "references": [
+        "AudioToolbox.EventTracer.Core",
+        "AudioToolbox.EventTracer.TestSupport",
+        "UnityEngine.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

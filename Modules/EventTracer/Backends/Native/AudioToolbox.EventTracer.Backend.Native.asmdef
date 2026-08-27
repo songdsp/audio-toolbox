@@ -1,0 +1,16 @@
+{
+    "name": "AudioToolbox.EventTracer.Backend.Native",
+    "rootNamespace": "AudioToolbox.EventTracer.Backends.Native",
+    "references": [
+        "AudioToolbox.EventTracer.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
