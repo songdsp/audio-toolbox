@@ -27,6 +27,13 @@ var STEAL_FURTHEST = 4;
 var FOLDER_NAME = "AudioToolboxTrace";
 var BANK_NAME = "TraceFixture";
 
+/*
+    A global parameter for the context capture tests. Global parameters are flat and
+    project-wide - there are no folders to hide one in - so the name carries its own
+    namespace to keep it out of the way of whatever the project already has.
+*/
+var GLOBAL_PARAMETER_NAME = "AudioToolboxTraceTension";
+
 function log(message) {
     console.log("[trace-fixture] " + message);
 }
@@ -75,6 +82,38 @@ function ensureBank() {
     bank.folder = studio.project.workspace.masterBankFolder;
     log("created bank " + BANK_NAME);
     return bank;
+}
+
+/*
+    A project-wide parameter, which in the project model is a ParameterPreset owning a
+    GameParameter with isGlobal set. The preset is what appears in the Parameters
+    browser; the GameParameter underneath it is where every property that matters lives.
+*/
+function ensureGlobalParameter() {
+    var preset = findByName("ParameterPreset", GLOBAL_PARAMETER_NAME);
+
+    if (!preset) {
+        preset = studio.project.create("ParameterPreset");
+        preset.name = GLOBAL_PARAMETER_NAME;
+        preset.folder = studio.project.workspace.masterParameterPresetFolder;
+        log("created parameter preset " + GLOBAL_PARAMETER_NAME);
+    }
+
+    var parameter = preset.parameter;
+
+    if (!parameter) {
+        parameter = studio.project.create("GameParameter");
+        preset.parameter = parameter;
+    }
+
+    parameter.isGlobal = true;
+    parameter.minimum = 0;
+    parameter.maximum = 1;
+    parameter.initialValue = 0;
+
+    log("  " + GLOBAL_PARAMETER_NAME + ": isGlobal=" + parameter.isGlobal +
+        " range=" + parameter.minimum + ".." + parameter.maximum);
+    return preset;
 }
 
 function importAudio(path) {
@@ -240,6 +279,7 @@ log("project: " + FIXTURE.projectPath);
 
 var folder = ensureFolder();
 var bank = ensureBank();
+ensureGlobalParameter();
 var audioFile = importAudio(FIXTURE.longWavPath);
 
 for (var i = 0; i < SPECS.length; i++) {

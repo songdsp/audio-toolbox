@@ -22,6 +22,7 @@ EventTracer records every call through its facade and tells them apart.
 
 - [Known limits](#known-limits) — read first
 - [Using it](#using-it)
+- [What a record carries](#what-a-record-carries)
 - [The outcomes](#the-outcomes)
 - [Backend support](#backend-support)
 - [Architecture](#architecture) · [Performance](#performance) · [The log format](#the-log-format)
@@ -53,6 +54,20 @@ table rather than papered over.
 place as callbacks arrive, so a voice still playing when its record scrolls out
 of the ring buffer can no longer be updated. Counted in the session header, never
 silently dropped.
+
+**An emitter's path is fixed the first time it is seen.** Building it walks the
+hierarchy and allocates a string, so it happens once per object and is cached.
+An object renamed or reparented afterwards keeps the path it had at first
+sighting. Two consequences worth knowing: a pooled emitter reused for a different
+purpose still reads under its original path, and the cache holds a reference to
+every emitter it has seen — bounded by `EmitterPathCapacity`, but that many
+managed wrappers stay reachable for the session.
+
+**Only global parameters are captured, and only ones the backend admits to.** Per
+instance values are not recorded — the snapshot is taken at the post, before they
+exist. On the native backend nothing is captured at all: Unity's audio has no
+global parameter concept, and inventing one would put values in a log that no
+engine ever acted on.
 
 ---
 
@@ -129,6 +144,10 @@ AudioTrace.Configure(new AudioTraceSettings
     MaxConcurrentVoices = 512,
     SignalQueueCapacity = 4096,
     InternCapacity = 8192,
+    EmitterPathCapacity = 4096,     // distinct emitters whose scene path is kept
+    MaxTrackedParameters = 256,
+    PendingSnapshotCapacity = 1024, // parameter states staged between flushes
+    GlobalParameterSampleIntervalSeconds = 0.25f,
     WriteToDisk = true,
     FlushIntervalSeconds = 2f,
     NaturalEndToleranceSeconds = 0.1,
@@ -137,6 +156,59 @@ AudioTrace.Configure(new AudioTraceSettings
 
 Before the first post. Afterwards the buffers exist and resizing them would mean
 discarding a session in progress, so the call is ignored and says so.
+
+`GlobalParameterSampleIntervalSeconds` reads oddly at its edges and the reading is
+deliberate: **zero means no interval** — a poll every frame — and a **negative**
+value turns polling off, leaving the facade as the only source of parameter
+values.
+
+---
+
+## What a record carries
+
+An outcome on its own rarely settles anything. "A footstep was `Virtualized`" is
+the start of a question, not the end of one — which footstep, triggered from
+where, with the game in what state. A record answers all four so that reading one
+is enough:
+
+| field | what it answers | where it comes from |
+|---|---|---|
+| `EventKeyId` | which event | the key you posted |
+| `EmitterPathId` | which object | `/Level/Enemies/Rifleman/Muzzle`, walked once per emitter and cached |
+| `CallSiteId` | which line | `[CallerFilePath]` / `[CallerLineNumber]`, a compile-time constant |
+| `EmitterPos` · `ListenerPos` · `DistanceToListener` | how far away | sampled at the post; `-1` when there is nothing to measure |
+| `ParamSnapshotId` | what the world was doing | the global parameters in force at the post |
+| `Outcome` · `BackendResultCode` | what became of it | the normalised outcome and the middleware's raw code |
+
+The console dump prints all of it:
+
+```
+f5    0.000s  StoppedEarly   event:/SFX/Gunshot  [5.0m]  Assets/Combat/Rifle.cs:88
+  on /Level/Rifleman/Muzzle
+  Tension=0.2  Weather=3
+```
+
+### Parameter snapshots
+
+A snapshot is the set of **global** parameters — the ones describing the world
+rather than one sound. They reach the tracer two ways:
+
+- **Through the facade.** `AudioTrace.SetGlobalParameter` records the value as it
+  is set: exact, immediate, no polling lag.
+- **By asking the backend.** Every
+  `GlobalParameterSampleIntervalSeconds`, the tracer reads the middleware's own
+  parameter list. This is what catches values set by code that never goes through
+  the facade, which are exactly the ones that explain a sound nobody can account
+  for.
+
+Storage is differential, and that is what makes it affordable. A capture taken
+while nothing has changed hands back **the same id the previous one got**, so a
+burst of forty footsteps under one unchanging state shares a single snapshot; a
+capture after a change writes only what changed. Reading is the reverse walk, and
+the reader always hands back the whole set.
+
+Per-instance parameters are deliberately not captured. A snapshot is taken at the
+post, before any of them could have been set, so recording them would say nothing.
 
 ---
 
@@ -182,14 +254,17 @@ is plausible and wrong.
 | Stolen | ✅ | ✅ | — |
 | StoppedEarly | ✅ | ✅ | — |
 | Distance to listener | ✅ | ✅ | — |
+| Emitter scene path | ✅ | ✅ | — |
+| Call site | ✅ | ✅ | — |
+| Global parameter snapshots | ✅ | ❌ | — |
 | Attach an existing instance | ✅ | ❌ | — |
 
 **The Native backend is a real backend, not a null object.** Clips are loaded
 from `Resources` by event key, sounds are heard, and a pool of 64 AudioSources
 runs out and steals the oldest — which is a genuine `Stolen`. What it cannot
 report is `Rejected` and `Virtualized`, because those belong to a virtual voice
-system Unity does not have. They are absent from this table rather than
-approximated.
+system Unity does not have, and global parameters, which Unity's audio has no
+notion of at all. They are absent from this table rather than approximated.
 
 **FMOD is optional.** The backend assembly carries a define constraint, so a
 project with no middleware compiles and falls back to Native.
@@ -286,14 +361,25 @@ next frame to try again on.
 ## The log format
 
 `.adtrace` is a magic number, a version, and then a stream of tagged chunks:
-interned strings, records, and the session header as JSON.
+interned strings, parameter slots, parameter snapshots, records, and the session
+header as JSON.
 
 Chunked rather than sectioned, because the sessions that matter most are the ones
 that ended badly. A layout with a table of contents at the end is unreadable
 after a crash — precisely when someone most wants to see what the audio system
 was doing. Here a truncated file loses its last chunk and nothing else, and
-because every string is emitted before the records that reference it, what
-survives still resolves.
+because **every chunk is written after everything it depends on** — strings, then
+the parameter slots that name them, then the snapshots that use those slots, then
+the records that point at those snapshots — what survives still resolves.
+
+A snapshot chunk carries only the parameters that differ from the snapshot before
+it, plus the id of that earlier one. A reader walks the chain back to the first
+snapshot to rebuild the full set; `TraceSession.TryResolveParameters` does that
+and returns false rather than a partial set when the chain is not all there.
+
+Format version 2 added the parameter and snapshot chunks. The record layout is
+unchanged, so version 1 logs still read back — every record in one simply carries
+no snapshot, which is the truth about a session recorded before this existed.
 
 The header carries the Unity version, platform, backend and its version, buffer
 capacity, and the counts of anything dropped. A truncated session that presented
@@ -316,6 +402,11 @@ a virtualisation, and a 3D event with a narrow range to fall out of.
 project and builds the bank, driving `fmodstudiocl` over a scripting API script.
 It generates its own audio asset, so nothing has to be supplied, and re-running
 reconfigures the existing events rather than duplicating them.
+
+It also authors one global parameter, `AudioToolboxTraceTension`, for the
+parameter-capture tests. Global parameters are project-wide and cannot live in a
+folder, so the name carries its own prefix to stay out of the way of whatever the
+project already has.
 
 ```powershell
 ./Tools/TraceFixture~/build-trace-fixture.ps1 -Project path/to/Project.fspro
@@ -340,8 +431,8 @@ wrong behaviour — 4 reads as None but steals, 3 reads as Virtualize but refuse
 ## Roadmap
 
 Shipped: the facade, zero-allocation collection, the on-disk format, the FMOD
-backend and all seven outcomes.
+backend, all seven outcomes, and the context on each record — emitter path, call
+site, distance and parameter snapshot.
 
-Next: emitter hierarchy paths and parameter snapshots on each record; the
-timeline window with filtering and `.adtrace` drag-and-drop; the Wwise backend;
-and the blind-spot notice driven by AudioDoctor's static scan.
+Next: the timeline window with filtering and `.adtrace` drag-and-drop; the Wwise
+backend; and the blind-spot notice driven by AudioDoctor's static scan.

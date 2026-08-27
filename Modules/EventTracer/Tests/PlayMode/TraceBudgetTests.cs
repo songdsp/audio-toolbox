@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioToolbox.EventTracer.TestSupport;
@@ -42,6 +43,14 @@ namespace AudioToolbox.EventTracer.Tests
                 MaxConcurrentVoices = 512,
                 SignalQueueCapacity = 8192,
                 InternCapacity = 8192,
+                EmitterPathCapacity = 4096,
+                MaxTrackedParameters = 256,
+                PendingSnapshotCapacity = 1024,
+
+                // Zero polls on every pump, which is the worst case rather than the
+                // default one. A budget that only holds when the poll is rare is not a
+                // budget.
+                GlobalParameterSampleIntervalSeconds = 0f,
 
                 // The disk path is measured separately; a background flush inside the
                 // measured window would be attributing the writer's cost to the caller's.
@@ -105,6 +114,55 @@ namespace AudioToolbox.EventTracer.Tests
             var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
 
             Assert.That(allocated, Is.Zero, $"{allocated} bytes allocated across 2000 sounds");
+        }
+
+        [UnityTest]
+        public IEnumerator CapturingContextAllocatesNothingEither()
+        {
+            // Everything the context capture adds is a lookup that must not allocate: the
+            // emitter path is a dictionary probe on a cached object, the parameter names
+            // are interned, and a snapshot taken under unchanged state is an int the pool
+            // already had. This is the test that catches the obvious regression — building
+            // the scene path per post, or copying the parameter set per record.
+            var emitter = new UnityEngine.GameObject("Budget Emitter").transform;
+
+            try
+            {
+                _probe.GlobalParameters.Add(new KeyValuePair<string, float>("Tension", 0.5f));
+                _probe.GlobalParameters.Add(new KeyValuePair<string, float>("Weather", 2f));
+
+                for (var i = 0; i < 128; i++)
+                {
+                    OneCompleteSoundFrom(emitter);
+                }
+
+                yield return null;
+
+                var before = GC.GetAllocatedBytesForCurrentThread();
+
+                for (var i = 0; i < 2000; i++)
+                {
+                    OneCompleteSoundFrom(emitter);
+                }
+
+                var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+                Assert.That(allocated, Is.Zero, $"{allocated} bytes allocated across 2000 sounds with context");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(emitter.gameObject);
+            }
+        }
+
+        private void OneCompleteSoundFrom(UnityEngine.Transform emitter)
+        {
+            var handle = AudioTrace.Post(EventKey, emitter);
+            AudioTraceRuntime.PumpForTests();
+
+            _probe.Emit(handle.VoiceId, ProbeSignal.Stopped);
+            _probe.Emit(handle.VoiceId, ProbeSignal.Destroyed);
+            AudioTraceRuntime.PumpForTests();
         }
 
         [UnityTest]

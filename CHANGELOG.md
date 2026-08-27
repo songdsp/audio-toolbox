@@ -18,6 +18,13 @@ from each other, verified against an FMOD project built to provoke each one.
 - **Outcomes** — HandleInvalid, Rejected, Started, Virtualized, Stolen,
   StoppedEarly, plus the distance to the listener on every record. The raw
   middleware result code is kept alongside the normalised outcome.
+- **Context on every record** — the emitter's scene path, the call site, the
+  distance, and the global parameters in force at the post. One record is meant
+  to be enough to judge the call that made it without going back to the code.
+- **Parameter snapshots** — global parameters recorded as they are set through
+  the facade, and polled from the backend on an interval so that values set
+  elsewhere are not missed. Stored differentially: posts under unchanged state
+  share one snapshot, and a change writes only what changed.
 - **Collection** — a fixed ring buffer of struct records, a string intern table,
   and a background writer. Zero allocation per post, asserted in a PlayMode test
   rather than claimed.
@@ -28,7 +35,8 @@ from each other, verified against an FMOD project built to provoke each one.
 - **Native backend** — AudioClips stand in for events, so the facade and its
   tests work with no middleware installed.
 - **Test fixture** — `Tools/TraceFixture~` authors the FMOD events each outcome
-  needs and builds their bank, headlessly and repeatably.
+  needs, plus a global parameter for the context tests, and builds their bank,
+  headlessly and repeatably.
 - **Toolbox** — `AUDIOTOOLBOX_TRACE` toggle under **Window → Audio Toolbox →
   EventTracer**.
 
@@ -44,6 +52,14 @@ from each other, verified against an FMOD project built to provoke each one.
   outcome; reverting it would erase the evidence of the dropout being reported.
 - **Distance is `-1`, not `0`, when there is nothing to measure.** Zero reads as
   "on top of the listener", which is plausible and wrong.
+- **Snapshots are stored as differences, and read back whole.** A full copy per
+  post would make a burst of footsteps the largest thing in the log; a reader
+  that handed back only the differences would make every record a puzzle. The
+  chain is walked on read, and a chain the log does not fully contain is reported
+  as unresolvable rather than as a partial set.
+- **The emitter path cache is keyed by reference identity**, not by Unity's
+  instance id. That id changed name and type across releases; object identity
+  did not, and a cache keyed on a moving target breaks quietly one upgrade later.
 - **The trace define is opt-in.** Middleware presence is a fact about a project
   and is detected; whether a build carries a tracer is a decision and is not.
 
@@ -53,12 +69,18 @@ from each other, verified against an FMOD project built to provoke each one.
   say what they did at runtime.
 - **`NotCalled` is never produced here.** A tracer records calls that happened.
 - **The Native backend cannot report `Rejected` or `Virtualized`** — Unity has no
-  virtual voice system. Absent from the support matrix rather than approximated.
+  virtual voice system — nor global parameters, which it has no notion of.
+  Absent from the support matrix rather than approximated.
+- **An emitter's path is fixed at first sighting.** Rebuilding it per post would
+  cost the allocation the cache exists to avoid, so an object renamed or
+  reparented later keeps its original path, and a pooled emitter reused for
+  something else still reads under the first name it had.
+- **Per-instance parameters are not captured.** A snapshot is taken at the post,
+  before any of them could have been set.
 - **A voice outliving the ring buffer loses its outcome**, counted in the session
   header rather than dropped silently.
 - No timeline window yet; sessions are read through the console dump and
-  `TraceLogReader`. Emitter hierarchy paths and parameter snapshots are not
-  captured yet — their record fields are present and unset.
+  `TraceLogReader`.
 
 ## [0.1.0] - 2026-08-19
 

@@ -31,7 +31,12 @@ namespace AudioToolbox.EventTracer
         /// <summary>Intern id of the event key, e.g. "event:/SFX/Gunshot".</summary>
         public int EventKeyId;
 
-        /// <summary>Intern id of the emitter's scene path, or <see cref="TraceFormat.NoStringId"/>.</summary>
+        /// <summary>
+        /// Intern id of the emitter's scene path — "/Level/Enemies/Rifleman/Muzzle" —
+        /// or <see cref="TraceFormat.NoStringId"/> for a sound with no emitter. Resolved
+        /// once per object and cached, so an object renamed or reparented later keeps the
+        /// path it had when the tracer first saw it.
+        /// </summary>
         public int EmitterPathId;
 
         /// <summary>Intern id of "file:line" for the call site, or <see cref="TraceFormat.NoStringId"/>.</summary>
@@ -59,7 +64,15 @@ namespace AudioToolbox.EventTracer
         /// </summary>
         public int BackendResultCode;
 
-        /// <summary>Index into the parameter snapshot pool. Phase 3; currently <see cref="TraceFormat.NoSnapshotId"/>.</summary>
+        /// <summary>
+        /// The set of global parameters in force when this sound was posted, or
+        /// <see cref="TraceFormat.NoSnapshotId"/> when none were known.
+        /// </summary>
+        /// <remarks>
+        /// An id, not a copy: sounds posted under identical state all point at the same
+        /// snapshot, and each snapshot stores only what changed from the one before it.
+        /// A whole burst of footsteps therefore costs one snapshot between them.
+        /// </remarks>
         public int ParamSnapshotId;
     }
 }

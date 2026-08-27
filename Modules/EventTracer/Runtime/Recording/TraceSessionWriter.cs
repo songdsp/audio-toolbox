@@ -36,6 +36,7 @@ namespace AudioToolbox.EventTracer.Recording
         // Two buffers: the main thread fills one while the writer drains the other.
         private readonly AudioTraceRecord[] _recordBuffer;
         private readonly List<KeyValuePair<int, string>> _stringBuffer = new List<KeyValuePair<int, string>>();
+        private readonly ParameterFlushBuffer _parameterBuffer = new ParameterFlushBuffer();
 
         private int _recordCount;
         private string _pendingHeaderJson;
@@ -83,6 +84,7 @@ namespace AudioToolbox.EventTracer.Recording
             AudioTraceRecord[] records,
             int recordCount,
             List<KeyValuePair<int, string>> newStrings,
+            ParameterFlushBuffer parameters,
             string headerJson)
         {
             if (_busy || _stopping)
@@ -98,6 +100,8 @@ namespace AudioToolbox.EventTracer.Recording
             {
                 _stringBuffer.AddRange(newStrings);
             }
+
+            _parameterBuffer.CopyFrom(parameters);
 
             _pendingHeaderJson = headerJson;
 
@@ -195,6 +199,35 @@ namespace AudioToolbox.EventTracer.Recording
                 writer.Write(TraceFormat.ChunkTag.String);
                 writer.Write(_stringBuffer[i].Key);
                 writer.Write(_stringBuffer[i].Value ?? string.Empty);
+            }
+
+            // Then parameter slots, then the snapshots that name them, then the records
+            // that point at those snapshots. Same discipline as the strings above, for
+            // the same reason: every chunk arrives after everything it depends on, so a
+            // log cut short anywhere still resolves everything it does contain.
+            for (var i = 0; i < _parameterBuffer.Slots.Count; i++)
+            {
+                var slot = _parameterBuffer.Slots[i];
+                writer.Write(TraceFormat.ChunkTag.Parameter);
+                writer.Write(slot.Slot);
+                writer.Write(slot.NameStringId);
+            }
+
+            for (var i = 0; i < _parameterBuffer.Snapshots.Count; i++)
+            {
+                var snapshot = _parameterBuffer.Snapshots[i];
+
+                writer.Write(TraceFormat.ChunkTag.Snapshot);
+                writer.Write(snapshot.Id);
+                writer.Write(snapshot.ParentId);
+                writer.Write(snapshot.Count);
+
+                for (var d = 0; d < snapshot.Count; d++)
+                {
+                    var delta = _parameterBuffer.Deltas[snapshot.Offset + d];
+                    writer.Write(delta.Slot);
+                    writer.Write(delta.Value);
+                }
             }
 
             for (var i = 0; i < _recordCount; i++)

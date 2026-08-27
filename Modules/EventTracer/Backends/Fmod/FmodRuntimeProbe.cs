@@ -77,6 +77,11 @@ namespace AudioToolbox.EventTracer.Backends.Fmod
         private int[] _followSlot;
         private int _followCount;
 
+        // Built once on the first poll and kept, because assembling it marshals a string
+        // per parameter. Cleared on shutdown, since a new session may load other banks.
+        private FMOD.Studio.PARAMETER_DESCRIPTION[] _globalParameters;
+        private string[] _globalParameterNames;
+
         private string _unavailableReason = string.Empty;
 
         public string BackendId => "fmod";
@@ -169,6 +174,8 @@ namespace AudioToolbox.EventTracer.Backends.Fmod
             _signals = null;
             _descriptions.Clear();
             _lengths.Clear();
+            _globalParameters = null;
+            _globalParameterNames = null;
         }
 
         public bool Play(in PlayRequest request, int voiceId, out int backendResultCode)
@@ -262,6 +269,89 @@ namespace AudioToolbox.EventTracer.Backends.Fmod
 
         public void SetGlobalParameter(string name, float value) =>
             RuntimeManager.StudioSystem.setParameterByName(name, value);
+
+        /// <summary>
+        /// Reads every global parameter the loaded banks declare.
+        /// </summary>
+        /// <remarks>
+        /// The description list is fetched once and kept, because building it means
+        /// allocating an array and marshalling a string per parameter — acceptable at
+        /// startup, not on an interval. Names are marshalled out of FMOD's
+        /// <c>StringWrapper</c> at the same time and kept as managed strings, so a poll is
+        /// nothing but a handful of <c>getParameterByID</c> calls.
+        /// <para>
+        /// Automatic parameters — distance, event cone angle and the rest — are skipped.
+        /// They are properties of one instance rather than of the world, and the system
+        /// scope has no meaningful value for them.
+        /// </para>
+        /// </remarks>
+        public int ReadGlobalParameters(string[] names, float[] values)
+        {
+            if (names == null || values == null)
+            {
+                return 0;
+            }
+
+            EnsureGlobalParameterCache();
+
+            var system = RuntimeManager.StudioSystem;
+
+            if (_globalParameters == null || !system.isValid())
+            {
+                return 0;
+            }
+
+            var limit = Math.Min(names.Length, values.Length);
+            var written = 0;
+
+            for (var i = 0; i < _globalParameters.Length && written < limit; i++)
+            {
+                if (system.getParameterByID(_globalParameters[i].id, out var value) != FMOD.RESULT.OK)
+                {
+                    continue;
+                }
+
+                names[written] = _globalParameterNames[i];
+                values[written] = value;
+                written++;
+            }
+
+            return written;
+        }
+
+        private void EnsureGlobalParameterCache()
+        {
+            if (_globalParameters != null)
+            {
+                return;
+            }
+
+            var system = RuntimeManager.StudioSystem;
+
+            if (!system.isValid() ||
+                system.getParameterDescriptionList(out var descriptions) != FMOD.RESULT.OK ||
+                descriptions == null)
+            {
+                return;
+            }
+
+            var kept = new List<FMOD.Studio.PARAMETER_DESCRIPTION>(descriptions.Length);
+            var keptNames = new List<string>(descriptions.Length);
+
+            for (var i = 0; i < descriptions.Length; i++)
+            {
+                if ((descriptions[i].flags & FMOD.Studio.PARAMETER_FLAGS.AUTOMATIC) != 0)
+                {
+                    continue;
+                }
+
+                kept.Add(descriptions[i]);
+                keptNames.Add((string)descriptions[i].name);
+            }
+
+            _globalParameters = kept.ToArray();
+            _globalParameterNames = keptNames.ToArray();
+        }
 
         public void Tick()
         {

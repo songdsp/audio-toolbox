@@ -12,7 +12,7 @@ so the ones you do not use cost disk space and nothing else.
 | | | Status |
 |---|---|---|
 | **[AudioDoctor](Documentation~/AudioDoctor.md)** | Static validation for audio pipelines — reconciles what the middleware declares, what the banks contain and what the project references, then reports the gaps | v0.1 |
-| **[EventTracer](Documentation~/EventTracer.md)** | Runtime tracing — records every sound posted through its facade and tells the seven ways one can fail to be heard apart from each other | v0.2 · FMOD |
+| **[EventTracer](Documentation~/EventTracer.md)** | Runtime tracing — records every sound posted through its facade, tells the seven ways one can fail to be heard apart from each other, and keeps the emitter, the call site and the game state behind each one | v0.2 · FMOD |
 
 ## Install
 

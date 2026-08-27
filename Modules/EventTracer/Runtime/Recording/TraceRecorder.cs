@@ -29,6 +29,8 @@ namespace AudioToolbox.EventTracer.Recording
         private readonly AudioTraceSettings _settings;
         private readonly TraceRingBuffer _ring;
         private readonly StringInternTable _strings;
+        private readonly EmitterPathCache _paths;
+        private readonly ParameterSnapshotPool _parameters;
         private readonly TraceSessionWriter _writer;
 
         // Per-voice state, indexed by voice id.
@@ -41,6 +43,20 @@ namespace AudioToolbox.EventTracer.Recording
         // Scratch owned by the recorder so a flush allocates nothing either.
         private readonly AudioTraceRecord[] _flushBuffer;
         private readonly List<KeyValuePair<int, string>> _flushStrings = new List<KeyValuePair<int, string>>();
+        private readonly ParameterFlushBuffer _flushParameters = new ParameterFlushBuffer();
+
+        // Arrays the probe fills on each poll. Owned here so that sampling the world's
+        // parameters, like everything else on this path, allocates nothing.
+        private readonly string[] _sampleNames;
+        private readonly float[] _sampleValues;
+        private float _nextSampleTime;
+
+        // True when the previous flush was drained but the writer would not take it. The
+        // next flush merges into the same buffers rather than starting them empty.
+        // Records lost that way are counted and gone; strings and snapshots are not, on
+        // purpose — a lost record costs one record, while a lost name or snapshot leaves
+        // every other record that referred to it unreadable.
+        private bool _flushBuffersHeldOver;
 
         // (file intern id, line) -> intern id of "file:line". Composing that string on
         // every post would allocate on the collection path; composing it once per
@@ -68,6 +84,12 @@ namespace AudioToolbox.EventTracer.Recording
 
             _ring = new TraceRingBuffer(settings.RecordCapacity);
             _strings = new StringInternTable(settings.InternCapacity);
+            _paths = new EmitterPathCache(_strings, settings.EmitterPathCapacity);
+            _parameters = new ParameterSnapshotPool(
+                _strings, settings.MaxTrackedParameters, settings.PendingSnapshotCapacity);
+
+            _sampleNames = new string[settings.MaxTrackedParameters];
+            _sampleValues = new float[settings.MaxTrackedParameters];
 
             _state = new VoiceOutcomeState[maxVoices];
             _sequence = new long[maxVoices];
@@ -96,6 +118,7 @@ namespace AudioToolbox.EventTracer.Recording
         public void BeginVoice(
             int voiceId,
             string eventKey,
+            Transform emitter,
             Vector3 emitterPos,
             bool isPositioned,
             bool hasListener,
@@ -119,7 +142,7 @@ namespace AudioToolbox.EventTracer.Recording
                 Frame = Time.frameCount,
                 TimeSeconds = _clock.Elapsed.TotalSeconds,
                 EventKeyId = _strings.Intern(eventKey),
-                EmitterPathId = TraceFormat.NoStringId,
+                EmitterPathId = _paths.GetPathId(emitter),
                 CallSiteId = InternCallSite(callerFilePath, callerLineNumber),
                 EmitterPos = emitterPos,
                 ListenerPos = hasListener ? listenerPos : Vector3.zero,
@@ -133,7 +156,11 @@ namespace AudioToolbox.EventTracer.Recording
                     : -1f,
                 Outcome = state.Outcome,
                 BackendResultCode = backendResultCode,
-                ParamSnapshotId = TraceFormat.NoSnapshotId,
+
+                // Captured here rather than when the sound ends: the question a record
+                // answers is what the world looked like at the moment something decided
+                // to play this, and by the end of the sound that moment is gone.
+                ParamSnapshotId = _parameters.Capture(),
             };
 
             var sequence = _ring.Append(in record);
@@ -200,6 +227,41 @@ namespace AudioToolbox.EventTracer.Recording
             return false;
         }
 
+        /// <summary>
+        /// Notes a global parameter the game just set through the facade. Exact and
+        /// immediate, which is why the facade is the preferred way to set one.
+        /// </summary>
+        public void NoteGlobalParameter(string name, float value) => _parameters.Set(name, value);
+
+        /// <summary>
+        /// Asks the backend what its global parameters are, at most once per configured
+        /// interval. This is how values set behind the facade's back get into the log.
+        /// A negative interval means the caller wants no polling at all.
+        /// </summary>
+        public void SampleGlobalParameters(IAudioRuntimeProbe probe)
+        {
+            if (probe == null || _settings.GlobalParameterSampleIntervalSeconds < 0f)
+            {
+                return;
+            }
+
+            var now = Time.unscaledTime;
+
+            if (now < _nextSampleTime)
+            {
+                return;
+            }
+
+            _nextSampleTime = now + _settings.GlobalParameterSampleIntervalSeconds;
+
+            var count = probe.ReadGlobalParameters(_sampleNames, _sampleValues);
+
+            for (var i = 0; i < count && i < _sampleNames.Length; i++)
+            {
+                _parameters.Set(_sampleNames[i], _sampleValues[i]);
+            }
+        }
+
         /// <summary>Marks a voice finished without a signal — used when the facade gives up on it.</summary>
         public void AbandonVoice(int voiceId)
         {
@@ -258,10 +320,21 @@ namespace AudioToolbox.EventTracer.Recording
             var barrier = OldestUnfinishedSequence();
             var count = _ring.Drain(barrier, _flushBuffer);
 
-            _flushStrings.Clear();
-            _strings.DrainNewEntries(_flushStrings);
+            if (!_flushBuffersHeldOver)
+            {
+                _flushStrings.Clear();
+                _flushParameters.Clear();
+            }
 
-            if (count == 0 && _flushStrings.Count == 0 && !force)
+            // Names and slots before the things that reference them, in the buffers as on
+            // disk. A snapshot naming a slot the reader has not seen declared is a number
+            // with nothing behind it.
+            _strings.DrainNewEntries(_flushStrings);
+            _parameters.Drain(_flushParameters);
+
+            _flushBuffersHeldOver = false;
+
+            if (count == 0 && _flushStrings.Count == 0 && _flushParameters.IsEmpty && !force)
             {
                 return;
             }
@@ -275,13 +348,17 @@ namespace AudioToolbox.EventTracer.Recording
             var header = _headerSent && !force ? null : JsonUtility.ToJson(_header);
             _headerSent = true;
 
-            if (!_writer.TrySubmit(_flushBuffer, count, _flushStrings, header))
+            if (!_writer.TrySubmit(_flushBuffer, count, _flushStrings, _flushParameters, header))
             {
                 // Only reachable if the writer became busy between the check above and
                 // here, which nothing else submits to. Counted rather than assumed
                 // impossible: a session that quietly lost records is the failure this
                 // module exists to avoid producing.
                 _lostToWriterCount += count;
+
+                // The records are gone, but their context is kept for the next flush.
+                _flushBuffersHeldOver = true;
+                _headerSent = false;
             }
         }
 
@@ -295,6 +372,8 @@ namespace AudioToolbox.EventTracer.Recording
         {
             _header.DroppedRecordCount = _ring.DroppedCount + _lostToWrapCount + _lostToWriterCount;
             _header.DroppedStringCount = _strings.DroppedCount;
+            _header.DroppedEmitterPathCount = _paths.DroppedCount;
+            _header.DroppedSnapshotCount = _parameters.DroppedCount;
             _header.RecordCount = (int)(_writer?.RecordsWritten ?? 0) + justDrained;
         }
 

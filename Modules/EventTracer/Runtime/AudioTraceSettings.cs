@@ -25,6 +25,37 @@ namespace AudioToolbox.EventTracer
         public int InternCapacity;
 
         /// <summary>
+        /// Distinct emitters whose scene path is remembered. Past it, records say
+        /// "(intern table full)" for the path rather than paying a string build per post.
+        /// </summary>
+        public int EmitterPathCapacity;
+
+        /// <summary>
+        /// Distinct global parameters a session will track. A project with more than this
+        /// many is unusual; the rest are counted as dropped rather than silently ignored.
+        /// </summary>
+        public int MaxTrackedParameters;
+
+        /// <summary>
+        /// Parameter snapshots that may be staged between two flushes. Only states that
+        /// actually differ consume one, so this is far larger than it looks.
+        /// </summary>
+        public int PendingSnapshotCapacity;
+
+        /// <summary>
+        /// Seconds between polls of the backend for global parameter values.
+        /// </summary>
+        /// <remarks>
+        /// Parameters set through the facade are recorded the instant they are set, so
+        /// this interval only governs how quickly the tracer notices a parameter that some
+        /// other code changed behind its back. Zero means no interval — a poll every
+        /// frame. A <em>negative</em> value turns polling off entirely and leaves the
+        /// facade as the only source, which is the setting for a project that does not
+        /// want the tracer talking to its middleware on a timer.
+        /// </remarks>
+        public float GlobalParameterSampleIntervalSeconds;
+
+        /// <summary>
         /// Whether finished records are written to a .adtrace file under
         /// <c>Application.persistentDataPath</c>. Off leaves the session in memory only,
         /// which is what the performance tests want.
@@ -47,6 +78,10 @@ namespace AudioToolbox.EventTracer
             MaxConcurrentVoices = 512,
             SignalQueueCapacity = 4096,
             InternCapacity = 8192,
+            EmitterPathCapacity = 4096,
+            MaxTrackedParameters = 256,
+            PendingSnapshotCapacity = 1024,
+            GlobalParameterSampleIntervalSeconds = 0.25f,
             WriteToDisk = true,
             FlushIntervalSeconds = 2f,
             NaturalEndToleranceSeconds = 0.1,
@@ -61,6 +96,9 @@ namespace AudioToolbox.EventTracer
             if (result.MaxConcurrentVoices < 8) { result.MaxConcurrentVoices = 8; }
             if (result.SignalQueueCapacity < 64) { result.SignalQueueCapacity = 64; }
             if (result.InternCapacity < 16) { result.InternCapacity = 16; }
+            if (result.EmitterPathCapacity < 16) { result.EmitterPathCapacity = 16; }
+            if (result.MaxTrackedParameters < 1) { result.MaxTrackedParameters = 1; }
+            if (result.PendingSnapshotCapacity < 8) { result.PendingSnapshotCapacity = 8; }
             if (result.FlushIntervalSeconds < 0.1f) { result.FlushIntervalSeconds = 0.1f; }
             if (result.NaturalEndToleranceSeconds < 0) { result.NaturalEndToleranceSeconds = 0; }
 

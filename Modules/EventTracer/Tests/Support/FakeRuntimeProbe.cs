@@ -116,6 +116,31 @@ namespace AudioToolbox.EventTracer.TestSupport
         {
         }
 
+        /// <summary>
+        /// What a poll of this backend finds. Set it to stand in for a parameter the game
+        /// changed without going through the facade.
+        /// </summary>
+        public readonly List<KeyValuePair<string, float>> GlobalParameters =
+            new List<KeyValuePair<string, float>>();
+
+        /// <summary>How many times the recorder has polled. Lets a test assert the interval holds.</summary>
+        public int GlobalParameterReadCount { get; private set; }
+
+        public int ReadGlobalParameters(string[] names, float[] values)
+        {
+            GlobalParameterReadCount++;
+
+            var count = Mathf.Min(GlobalParameters.Count, Mathf.Min(names.Length, values.Length));
+
+            for (var i = 0; i < count; i++)
+            {
+                names[i] = GlobalParameters[i].Key;
+                values[i] = GlobalParameters[i].Value;
+            }
+
+            return count;
+        }
+
         public void Tick()
         {
         }

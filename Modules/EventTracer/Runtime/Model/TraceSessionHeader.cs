@@ -45,6 +45,18 @@ namespace AudioToolbox.EventTracer
         /// <summary>Strings that did not fit the intern table. Their records carry <see cref="TraceFormat.OverflowStringId"/>.</summary>
         public long DroppedStringCount;
 
+        /// <summary>
+        /// Emitters seen after the path cache filled up. Their records carry
+        /// <see cref="TraceFormat.OverflowStringId"/> where a scene path would be.
+        /// </summary>
+        public long DroppedEmitterPathCount;
+
+        /// <summary>
+        /// Parameter snapshots that could not be staged, plus parameters beyond the
+        /// tracked limit. Their records carry <see cref="TraceFormat.NoSnapshotId"/>.
+        /// </summary>
+        public long DroppedSnapshotCount;
+
         /// <summary>Records actually present in the file.</summary>
         public int RecordCount;
 

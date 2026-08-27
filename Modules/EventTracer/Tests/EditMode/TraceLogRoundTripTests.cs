@@ -37,6 +37,10 @@ namespace AudioToolbox.EventTracer.Tests
                 MaxConcurrentVoices = 8,
                 SignalQueueCapacity = 128,
                 InternCapacity = 64,
+                EmitterPathCapacity = 32,
+                MaxTrackedParameters = 8,
+                PendingSnapshotCapacity = 32,
+                GlobalParameterSampleIntervalSeconds = 0f,
                 WriteToDisk = true,
                 FlushIntervalSeconds = 0.1f,
                 NaturalEndToleranceSeconds = 0.1,
@@ -159,6 +163,80 @@ namespace AudioToolbox.EventTracer.Tests
             }
 
             Assert.That(keys, Is.EqualTo(new[] { "event:/SFX/Gunshot", "event:/Music/Menu" }));
+        }
+
+        [Test]
+        public void TheParametersARecordWasPostedUnderComeBackWhole()
+        {
+            // The point of the whole differential scheme: what is written is only what
+            // changed, and what is read back is the entire state anyway. If this ever
+            // fails, the log is smaller than it should be in the worst possible way.
+            AudioTrace.SetGlobalParameter("Tension", 0.2f);
+            AudioTrace.SetGlobalParameter("Weather", 1f);
+            PostAndFinish("event:/SFX/Calm", Vector3.zero, ProbeSignal.Stopped, 4.0);
+
+            AudioTrace.SetGlobalParameter("Tension", 0.9f);
+            PostAndFinish("event:/SFX/Panic", Vector3.zero, ProbeSignal.Stopped, 4.0);
+
+            AudioTraceRuntime.Shutdown();
+
+            var session = TraceLogReader.Read(_sessionPath);
+            var values = new Dictionary<string, float>();
+
+            Assert.That(session.Records.Count, Is.EqualTo(2));
+
+            Assert.That(session.TryResolveParameters(session.Records[0].ParamSnapshotId, values), Is.True);
+            Assert.That(values["Tension"], Is.EqualTo(0.2f).Within(1e-5f));
+            Assert.That(values["Weather"], Is.EqualTo(1f).Within(1e-5f));
+
+            Assert.That(session.TryResolveParameters(session.Records[1].ParamSnapshotId, values), Is.True);
+            Assert.That(values["Tension"], Is.EqualTo(0.9f).Within(1e-5f), "the changed value did not carry");
+            Assert.That(
+                values["Weather"],
+                Is.EqualTo(1f).Within(1e-5f),
+                "an unchanged parameter was lost — the snapshot chain is not being walked");
+        }
+
+        [Test]
+        public void ARecordWithNoSnapshotSaysSoRatherThanResolvingToNothing()
+        {
+            PostAndFinish("event:/SFX/Gunshot", Vector3.zero, ProbeSignal.Stopped, 4.0);
+            AudioTraceRuntime.Shutdown();
+
+            var session = TraceLogReader.Read(_sessionPath);
+            var values = new Dictionary<string, float>();
+
+            Assert.That(session.Records[0].ParamSnapshotId, Is.EqualTo(TraceFormat.NoSnapshotId));
+            Assert.That(session.TryResolveParameters(session.Records[0].ParamSnapshotId, values), Is.False);
+        }
+
+        [Test]
+        public void AnEmitterPathSurvivesTheRoundTrip()
+        {
+            var emitter = new GameObject("Turret").transform;
+
+            try
+            {
+                var handle = AudioTrace.Post("event:/SFX/Gunshot", emitter);
+                AudioTraceRuntime.PumpForTests();
+
+                // A record is only written once its voice can no longer change, so the
+                // sound has to end before there is anything on disk to read.
+                _probe.EmitAt(handle.VoiceIdForTests(), ProbeSignal.Stopped, 4.0);
+                _probe.EmitAt(handle.VoiceIdForTests(), ProbeSignal.Destroyed, 4.0);
+                AudioTraceRuntime.PumpForTests();
+
+                AudioTraceRuntime.Shutdown();
+
+                var session = TraceLogReader.Read(_sessionPath);
+
+                Assert.That(session.Records, Is.Not.Empty);
+                Assert.That(session.Resolve(session.Records[0].EmitterPathId), Is.EqualTo("/Turret"));
+            }
+            finally
+            {
+                Object.DestroyImmediate(emitter.gameObject);
+            }
         }
 
         [Test]

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -133,6 +134,26 @@ namespace AudioToolbox.EventTracer.Editor
                     "could be written. Raise AudioTraceSettings.RecordCapacity.");
             }
 
+            if (session.Header.DroppedEmitterPathCount > 0)
+            {
+                text.AppendLine(
+                    $"  {session.Header.DroppedEmitterPathCount} emitter(s) have no scene path: the path cache was " +
+                    "full. Raise AudioTraceSettings.EmitterPathCapacity.");
+            }
+
+            if (session.Header.DroppedSnapshotCount > 0)
+            {
+                text.AppendLine(
+                    $"  {session.Header.DroppedSnapshotCount} parameter snapshot(s) were dropped. Raise " +
+                    "AudioTraceSettings.PendingSnapshotCapacity or MaxTrackedParameters.");
+            }
+
+            if (session.ParameterSlots.Count > 0)
+            {
+                text.AppendLine(
+                    $"  {session.ParameterSlots.Count} parameter(s) tracked over {session.Snapshots.Count} distinct state(s)");
+            }
+
             if (session.EndedAbruptly)
             {
                 text.AppendLine("  The log ends mid-chunk — the process probably did not exit cleanly.");
@@ -171,11 +192,53 @@ namespace AudioToolbox.EventTracer.Editor
                 ? "no listener"
                 : $"{record.DistanceToListener:0.0}m";
 
-            return
+            var line =
                 $"    f{record.Frame,-7} {record.TimeSeconds,8:0.000}s  {record.Outcome,-14} " +
                 $"{session.Resolve(record.EventKeyId)}  [{distance}]  " +
                 $"{session.Resolve(record.CallSiteId)}" +
                 (record.BackendResultCode != 0 ? $"  (backend code {record.BackendResultCode})" : string.Empty);
+
+            var emitter = session.Resolve(record.EmitterPathId);
+
+            if (!string.IsNullOrEmpty(emitter))
+            {
+                line += $"\n      on {emitter}";
+            }
+
+            var parameters = DescribeParameters(session, record.ParamSnapshotId);
+
+            if (!string.IsNullOrEmpty(parameters))
+            {
+                line += $"\n      {parameters}";
+            }
+
+            return line;
+        }
+
+        /// <summary>
+        /// The world as it stood when the sound was posted, on one line.
+        /// </summary>
+        /// <remarks>
+        /// Sorted by name and capped, because this is a console dump rather than the
+        /// timeline window Phase 4 brings. Twenty parameters wrapped across a log entry
+        /// would make the outcome above it harder to see, which is the thing someone
+        /// opened the dump to read.
+        /// </remarks>
+        private static string DescribeParameters(TraceSession session, int snapshotId)
+        {
+            var values = new Dictionary<string, float>();
+
+            if (!session.TryResolveParameters(snapshotId, values) || values.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            var shown = values.OrderBy(pair => pair.Key, StringComparer.Ordinal).Take(8);
+            var text = string.Join("  ", shown.Select(pair => $"{pair.Key}={pair.Value:0.###}"));
+
+            return values.Count > 8
+                ? $"{text}  (+{values.Count - 8} more)"
+                : text;
         }
 
         [MenuItem("Window/Audio Toolbox/EventTracer/Open Trace Folder", priority = 122)]

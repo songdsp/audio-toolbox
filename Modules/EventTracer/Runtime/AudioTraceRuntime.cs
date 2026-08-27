@@ -271,6 +271,7 @@ namespace AudioToolbox.EventTracer
                 _recorder.BeginVoice(
                     voiceId,
                     eventKey,
+                    emitter,
                     position,
                     is3D,
                     hasListener,
@@ -337,6 +338,7 @@ namespace AudioToolbox.EventTracer
                 _recorder.BeginVoice(
                     voiceId,
                     eventKey,
+                    emitter,
                     position,
                     is3D,
                     hasListener,
@@ -382,6 +384,14 @@ namespace AudioToolbox.EventTracer
         internal static void SetGlobalParameter(string name, float value)
         {
             EnsureInitialized();
+
+#if AUDIOTOOLBOX_TRACE
+            // Recorded from the call rather than read back from the backend. The value is
+            // exact and it is known now, whereas a poll would find it up to an interval
+            // later and might miss it entirely if something else moved it back first.
+            _recorder?.NoteGlobalParameter(name, value);
+#endif
+
             _probe?.SetGlobalParameter(name, value);
         }
 
@@ -429,6 +439,7 @@ namespace AudioToolbox.EventTracer
             }
 
 #if AUDIOTOOLBOX_TRACE
+            _recorder?.SampleGlobalParameters(_probe);
             _recorder?.Flush(force: false);
 #endif
         }

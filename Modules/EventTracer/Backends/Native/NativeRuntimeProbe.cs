@@ -151,6 +151,12 @@ namespace AudioToolbox.EventTracer.Backends.Native
         {
         }
 
+        /// <summary>
+        /// Always none. Unity's own audio has no global parameter concept, and inventing
+        /// one here would put values in a log that no engine ever acted on.
+        /// </summary>
+        public int ReadGlobalParameters(string[] names, float[] values) => 0;
+
         public void Tick()
         {
             for (var i = 0; i < _sourceCount; i++)

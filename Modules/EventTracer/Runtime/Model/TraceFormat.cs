@@ -19,7 +19,19 @@ namespace AudioToolbox.EventTracer
         /// Bumped whenever <see cref="AudioTraceRecord"/> or the section layout changes.
         /// The reader refuses a version it does not know rather than misreading it.
         /// </summary>
-        public const int Version = 1;
+        public const int Version = 2;
+
+        /// <summary>
+        /// The oldest version this reader still understands.
+        /// </summary>
+        /// <remarks>
+        /// Version 2 added the parameter and snapshot chunks. It did not touch the record
+        /// layout, so a version 1 log reads back correctly — every record in it simply
+        /// carries <see cref="NoSnapshotId"/>, which is the truth about a session that had
+        /// no parameter capture. Refusing those logs would throw away working data to
+        /// enforce a number.
+        /// </remarks>
+        public const int MinReadableVersion = 1;
 
         public const string FileExtension = ".adtrace";
 
@@ -60,6 +72,20 @@ namespace AudioToolbox.EventTracer
             /// still leaves the opening one.
             /// </summary>
             public const byte Session = 3;
+
+            /// <summary>
+            /// A parameter slot: its index, then the intern id of its name. Emitted once,
+            /// before any snapshot that mentions the slot.
+            /// </summary>
+            public const byte Parameter = 4;
+
+            /// <summary>
+            /// One parameter snapshot: its id, the id it differs from (or
+            /// <see cref="NoSnapshotId"/> for the first), a count, then that many pairs of
+            /// slot index and value. A reader walks the parent chain to rebuild the full
+            /// set of parameters in force when a record was written.
+            /// </summary>
+            public const byte Snapshot = 5;
         }
     }
 }

@@ -82,6 +82,24 @@ namespace AudioToolbox.EventTracer
         bool TryGetListenerPosition(out Vector3 position);
 
         /// <summary>
+        /// Writes the backend's global parameters into the caller's arrays and returns how
+        /// many were written. Never allocates: the arrays belong to the caller, and the
+        /// names should come from a cache the probe built once.
+        /// </summary>
+        /// <remarks>
+        /// The point of polling rather than relying on
+        /// <see cref="SetGlobalParameter"/> alone is code that does not go through the
+        /// facade — a designer's snapshot, a gameplay system talking to the middleware
+        /// directly. Those are exactly the values that explain a sound nobody can account
+        /// for, so a tracer that only knew about its own calls would miss them.
+        /// <para>
+        /// Return 0 when the backend has no such concept. That is a fact about the
+        /// backend, not a failure, and the session simply carries no parameters.
+        /// </para>
+        /// </remarks>
+        int ReadGlobalParameters(string[] names, float[] values);
+
+        /// <summary>
         /// How long the event runs, in seconds, or 0 when the middleware cannot say
         /// (a looping event, an unknown key). Used to tell an early stop from a sound
         /// that simply finished, so 0 means "treat any stop as early".
