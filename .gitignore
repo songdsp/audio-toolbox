@@ -2,7 +2,6 @@
 .DS_Store
 
 # Unity generates these when the package is embedded in a project
-*.meta
 !Documentation~/**
 Library/
 Temp/

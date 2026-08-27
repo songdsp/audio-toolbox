@@ -18,16 +18,22 @@ so the ones you do not use cost disk space and nothing else.
 Unity **Package Manager** → **+** → **Add package from git URL**:
 
 ```
-https://github.com/songdsp/audio-toolbox.git#v0.1.0
+https://github.com/songdsp/audio-toolbox.git
 ```
 
 Or in `Packages/manifest.json`:
 
 ```json
-"com.caitsy.audiotoolbox": "https://github.com/songdsp/audio-toolbox.git#v0.1.0"
+"com.songyuan.audiotoolbox": "https://github.com/songdsp/audio-toolbox.git"
 ```
 
-Pin the tag. Without `#v0.1.0` you track `main`, which will move under you.
+This tracks `main`. There are no release tags yet, so the package moves as `main`
+does — expect breaking changes until a tagged release exists.
+
+Unity resolves the git URL once and caches the result, so pulling in later work
+means **removing the package and re-adding it**; simply reopening the project
+will not fetch new commits. To hold a specific commit in the meantime, append
+`#<commit-sha>` to the URL.
 
 ### Requirements
 

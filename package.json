@@ -1,5 +1,5 @@
 {
-  "name": "com.caitsy.audiotoolbox",
+  "name": "com.songyuan.audiotoolbox",
   "version": "0.1.0",
   "displayName": "Audio Toolbox",
   "description": "Editor tooling for game audio work in Unity. Modules are self-contained and cost nothing when unused.\n\nAudioDoctor — static validation for audio pipelines. Reconciles what the middleware project declares, what the built banks contain, and what the Unity project references, then reports locatable, fixable issues. Eight rules, a diagnostics window, and JSON/Markdown reports for CI. Never modifies an asset.",
@@ -9,7 +9,7 @@
     "name": "Songyuan Shi",
     "url": "https://github.com/songdsp"
   },
-  "documentationUrl": "https://github.com/songdsp/audio-toolbox/blob/main/Documentation~/AudioDoctor.md",
+  "documentationUrl": "https://github.com/songdsp/audio-toolbox/blob/main/README.md",
   "changelogUrl": "https://github.com/songdsp/audio-toolbox/blob/main/CHANGELOG.md",
   "licensesUrl": "https://github.com/songdsp/audio-toolbox/blob/main/LICENSE.md",
   "keywords": [
