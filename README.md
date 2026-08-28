@@ -1,11 +1,13 @@
 # Audio Toolbox
 
-Editor tooling for game audio work in Unity + middleware(FMOD, Wwise) workflow.
+Editor tooling for game audio debug work in Unity + middleware(FMOD, Wwise) workflow.
 
 One package, several modules. Each module is a self-contained set of assemblies,
 so the ones you do not use cost disk space and nothing else.
 
 ![diagnostics](Documentation~/diagnostics.png)
+
+![tracer](Documentation~\tracer.gif)
 
 ## Modules
 
