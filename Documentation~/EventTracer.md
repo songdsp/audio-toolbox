@@ -22,11 +22,12 @@ EventTracer records every call through its facade and tells them apart.
 
 - [Known limits](#known-limits) — read first
 - [Using it](#using-it)
+- [The timeline window](#the-timeline-window)
 - [What a record carries](#what-a-record-carries)
 - [The outcomes](#the-outcomes)
 - [Backend support](#backend-support)
 - [Architecture](#architecture) · [Performance](#performance) · [The log format](#the-log-format)
-- [The test fixture](#the-test-fixture)
+- [The demo scene](#the-demo-scene) · [The test fixture](#the-test-fixture)
 
 ---
 
@@ -125,15 +126,16 @@ Sessions are written to
 `Application.persistentDataPath/AudioToolboxTraces/session-<timestamp>.adtrace`,
 which is where you tell QA to look.
 
-**Window → Audio Toolbox → EventTracer → Dump Latest Session** prints a summary
-and every record that was not a plain `Started` — that filter is the whole
-workflow in one line. **Open Trace Folder** reveals the directory.
+**Window → Audio Toolbox → EventTracer → Timeline** is the way in. See
+[The timeline window](#the-timeline-window) below.
 
-The timeline window arrives in a later version; until then the console dump and
-`TraceLogReader` are the way in. The reader is not behind `AUDIOTOOLBOX_TRACE`,
-on purpose: the sessions worth reading come from someone else's build, and
-whether *your* project has tracing on has nothing to do with whether you can open
-one.
+**Dump Latest Session** prints the same thing to the console instead, which is
+the form that survives being pasted into a bug report, a chat message or a CI
+log. **Open Trace Folder** reveals the directory.
+
+Neither the window nor `TraceLogReader` is behind `AUDIOTOOLBOX_TRACE`, on
+purpose: the sessions worth reading come from someone else's build, and whether
+*your* project has tracing on has nothing to do with whether you can open one.
 
 ### Settings
 
@@ -161,6 +163,72 @@ discarding a session in progress, so the call is ignored and says so.
 deliberate: **zero means no interval** — a poll every frame — and a **negative**
 value turns polling off, leaving the facade as the only source of parameter
 values.
+
+---
+
+## The timeline window
+
+**Window → Audio Toolbox → EventTracer → Timeline.** Open a `.adtrace` file, drop
+one onto the window, or press **Latest Session** for the newest one this machine
+wrote.
+
+**It opens filtered to everything that was not a plain `Started`.** That is the
+module's whole claim in one default: a session is mostly sounds that worked, and
+a tool that made you filter those out yourself before it said anything would be a
+log viewer. Every outcome is one chip-click away when you want the full picture.
+
+```
+ HandleInvalid 3   Rejected 0   Virtualized 4   Stolen 6   StoppedEarly 5   Started 16 (off)
+────────────────────────────────────────────────────────────────────────────────────────────
+ event:/SFX/TypoedName        │      ▍                ▍              ▍
+ HandleInvalid 3              │
+ event:/SFX/Gunshot           │   ▂      ▂       ▂          ▂
+ Virtualized 4                │
+ event:/SFX/Footstep          │ ▂ ▂  ▂ ▂    ▂  ▂
+ Stolen 6                     │
+                             0.25s   0.50s   0.75s   1.00s   1.25s   1.50s
+```
+
+**Rows are lanes, the axis is time.** A list would tell you a gunshot was stolen
+at 12.4s; only the axis tells you that forty footsteps fired in the same tenth of
+a second, which is usually the actual answer. Switch **Rows** between *Event* and
+*Emitter* — the second is what finds a sound that is fine everywhere except on
+one object.
+
+**The worst lane is first.** Lanes sort by their most serious moment, then by how
+busy they are, then by name. Alphabetical order would be stable and useless;
+someone opened this window because something is wrong.
+
+**Marks collapse per pixel, worst-wins.** At any useful zoom several records share
+a column and only one mark fits. The one kept is the most serious, in this order:
+`HandleInvalid`, `Rejected`, `Virtualized`, `Stolen`, `StoppedEarly`, `Started`.
+A `HandleInvalid` is never hidden behind a `Started` from the same millisecond.
+
+**Outcome is drawn twice**, as colour *and* as height: failures reach full lane
+height, a plain `Started` is a short tick on the baseline. Colour alone would fail
+a colour-blind reader and would not survive the greyscale screenshot these
+pictures usually end up as.
+
+**Filtering** is the outcome chips, one search box, and a time range. The search
+matches the event key, the emitter path and the call site at once — the grouping
+already separates events from emitters, and someone typing `Rifleman` wants that
+object's sounds whichever field the name lives in. A chip that is switched off is
+dimmed rather than removed, and keeps showing its count, because that count is how
+you decide to switch it back on. **Fit** returns the range to the whole session.
+
+**Clicking a mark** opens the record: outcome and what it means, the emitter, the
+distance, the call site as a button that opens your editor at that line, and the
+global parameters in force when it was posted.
+
+**Warnings sit above the timeline, not in a footnote.** A session that dropped
+records is one where every count on screen is a lower bound, and reading a
+filtered timeline as "these are all the failures" would be wrong in the one
+direction that matters.
+
+**Capture Live** flushes a running session to disk and opens the file, rather than
+reaching into the recorder's buffers. One way of reading a session instead of two,
+and what you see in the editor is exactly what a build would have written —
+including the fact that a sound still playing has not been written yet.
 
 ---
 
@@ -304,7 +372,7 @@ specific.
 AudioToolbox.EventTracer.Core            Runtime  facade, voice slots, recording, format
 AudioToolbox.EventTracer.Backend.Native  Runtime  fallback, no constraint
 AudioToolbox.EventTracer.Backend.Fmod    Runtime  define constraint: AUDIOTOOLBOX_FMOD
-AudioToolbox.EventTracer.Editor          Editor   log reader, menus
+AudioToolbox.EventTracer.Editor          Editor   log reader, timeline window, menus
 AudioToolbox.EventTracer.TestSupport     Runtime  the fake probe (UNITY_INCLUDE_TESTS)
 AudioToolbox.EventTracer.Tests.EditMode
 AudioToolbox.EventTracer.Tests.PlayMode
@@ -392,6 +460,39 @@ would read as garbage on a desktop — the one case the format exists for.
 
 ---
 
+## The demo scene
+
+**Package Manager ▸ Audio Toolbox ▸ Samples ▸ EventTracer Demo ▸ Import**, then
+**Window ▸ Audio Toolbox ▸ EventTracer ▸ Create Demo Scene**.
+
+Seven objects, each of which fails to be heard in one specific way, each on a
+button. **Run all** fires them in order with a gap between them, which is what
+gives the session a readable time axis afterwards. Every object turns the colour
+of its outcome as the callbacks arrive, using the same palette as the timeline
+window.
+
+The scene is generated rather than shipped as a `.unity` asset. A scene asset in a
+sample was authored against one render pipeline and one Unity version and arrives
+broken in anything else; built from primitives at import time it is correct
+wherever it lands, and what it contains is readable as fifty lines of C# rather
+than as a diff of serialised YAML.
+
+It needs FMOD and the fixture bank below. Two things it turned up that are worth
+knowing on their own:
+
+**FMOD resolves event paths case-insensitively.** `event:/…/Basic2d` finds
+`Basic2D` and plays it. A rename that only changes case will not break FMOD — and
+will break anything comparing those strings itself. The demo's "typo" case has to
+be a transposition to fail at all.
+
+**Distance alone does not virtualise a voice.** A 3D sound posted 49 m past a 10 m
+max distance comes back `Started`, because FMOD only goes virtual when it needs the
+channel back. The sound really is playing, at nothing. It is the clearest case for
+why a record keeps the emitter and the distance and not just an outcome: here the
+outcome is correct, and it is not the answer.
+
+---
+
 ## The test fixture
 
 The seven outcomes need FMOD events built to provoke them: max instances of one
@@ -431,8 +532,8 @@ wrong behaviour — 4 reads as None but steals, 3 reads as Virtualize but refuse
 ## Roadmap
 
 Shipped: the facade, zero-allocation collection, the on-disk format, the FMOD
-backend, all seven outcomes, and the context on each record — emitter path, call
-site, distance and parameter snapshot.
+backend, all seven outcomes, the context on each record — emitter path, call site,
+distance and parameter snapshot — and the timeline window.
 
-Next: the timeline window with filtering and `.adtrace` drag-and-drop; the Wwise
-backend; and the blind-spot notice driven by AudioDoctor's static scan.
+Next: the Wwise backend, and the blind-spot notice driven by AudioDoctor's static
+scan.

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="root" class="root">
+
+        <uie:Toolbar name="toolbar" class="toolbar">
+            <uie:ToolbarButton name="latest-button" text="Latest Session" class="primary-button" />
+            <uie:ToolbarButton name="open-button" text="Open…" class="toolbar-button" />
+            <uie:ToolbarButton name="reload-button" text="Reload" class="toolbar-button" />
+            <uie:ToolbarButton name="capture-button" text="Capture Live" class="toolbar-button" />
+            <ui:VisualElement class="toolbar-spacer" />
+            <uie:ToolbarMenu name="group-menu" text="Rows: Event" class="toolbar-menu" />
+            <uie:ToolbarSearchField name="search-field" class="search-field" />
+        </uie:Toolbar>
+
+        <ui:VisualElement name="summary" class="summary">
+            <ui:VisualElement name="chips" class="chips" />
+            <ui:VisualElement class="summary-meta">
+                <ui:Label name="summary-source" class="summary-source" />
+                <ui:Label name="summary-detail" class="summary-detail" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="warning-strip" class="warning-strip" />
+
+        <ui:VisualElement name="empty-state" class="empty-state">
+            <ui:Label name="empty-title" class="empty-title" />
+            <ui:Label name="empty-body" class="empty-body" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="timeline" class="timeline">
+
+            <ui:VisualElement name="range-row" class="range-row">
+                <ui:VisualElement class="lane-gutter">
+                    <ui:Label text="Time range" class="range-caption" />
+                </ui:VisualElement>
+                <ui:VisualElement class="range-controls">
+                    <uie:DoubleField name="range-start" label="from" class="range-field" />
+                    <uie:DoubleField name="range-end" label="to" class="range-field" />
+                    <ui:Button name="range-fit" text="Fit" class="range-fit" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="ruler-row" class="ruler-row">
+                <ui:VisualElement class="lane-gutter" />
+                <ui:VisualElement name="ruler" class="ruler" />
+            </ui:VisualElement>
+
+            <ui:TwoPaneSplitView name="split" fixed-pane-index="1"
+                                 fixed-pane-initial-dimension="340" orientation="Horizontal">
+                <ui:VisualElement name="lane-pane" class="lane-pane">
+                    <ui:ListView name="lane-list" class="lane-list" />
+                </ui:VisualElement>
+                <ui:VisualElement name="detail-pane" class="detail-pane">
+                    <ui:ScrollView name="detail-scroll" class="detail-scroll">
+                        <ui:Label name="detail-placeholder" class="detail-placeholder"
+                                  text="Click a mark on a lane to see the sound it stands for — where it came from, how far away it was, and what the game was doing at the time." />
+                        <ui:VisualElement name="detail-body" class="detail-body" />
+                    </ui:ScrollView>
+                </ui:VisualElement>
+            </ui:TwoPaneSplitView>
+
+        </ui:VisualElement>
+
+        <ui:VisualElement name="drop-hint" class="drop-hint">
+            <ui:Label text="Drop to open this session" class="drop-hint-label" />
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

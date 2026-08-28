@@ -1,0 +1,460 @@
+/*
+ * EventTracer timeline window.
+ *
+ * The outcome palette below is the single definition of those colours: the lane
+ * marks are custom-painted and read these same custom properties back through
+ * ICustomStyle, so a shade changed here changes the chips and the timeline
+ * together. Outcome is also carried by mark height, so nothing here is the only
+ * thing telling a reader what they are looking at.
+ *
+ * Both editor skins are defined; nothing relies on the default being dark.
+ */
+
+.root {
+    flex-grow: 1;
+
+    --et-outcome-notcalled: #6b7076;
+    --et-outcome-handleinvalid: #c62828;
+    --et-outcome-rejected: #e05a2b;
+    --et-outcome-started: #4a8f63;
+    --et-outcome-virtualized: #c9971a;
+    --et-outcome-stolen: #d4832a;
+    --et-outcome-stoppedearly: #5b82ad;
+
+    --et-lane-baseline: #c4c4c4;
+    --et-selection: #2f6fd0;
+    --et-surface: #e4e4e4;
+    --et-surface-alt: #ededed;
+    --et-border: #c8c8c8;
+    --et-text-dim: #5a5a5a;
+}
+
+.root.dark {
+    --et-outcome-notcalled: #8b949e;
+    --et-outcome-handleinvalid: #ff6369;
+    --et-outcome-rejected: #ff8a4c;
+    --et-outcome-started: #57a773;
+    --et-outcome-virtualized: #ffc233;
+    --et-outcome-stolen: #ffa04c;
+    --et-outcome-stoppedearly: #7aa7d9;
+
+    --et-lane-baseline: #4a4a4a;
+    --et-selection: #5b9dff;
+    --et-surface: #383838;
+    --et-surface-alt: #303030;
+    --et-border: #232323;
+    --et-text-dim: #a0a0a0;
+}
+
+/* ---------------------------------------------------------------- toolbar */
+
+.toolbar {
+    height: 22px;
+}
+
+.primary-button {
+    -unity-font-style: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.toolbar-button {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.toolbar-spacer {
+    flex-grow: 1;
+}
+
+.toolbar-menu {
+    min-width: 96px;
+}
+
+.search-field {
+    width: 190px;
+}
+
+/* ---------------------------------------------------------------- summary */
+
+.summary {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 6px;
+    padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background-color: var(--et-surface);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--et-border);
+}
+
+.chips {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.chip {
+    flex-direction: row;
+    align-items: center;
+    height: 19px;
+    margin-right: 4px;
+    padding-left: 7px;
+    padding-right: 8px;
+    border-radius: 9px;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    background-color: var(--et-surface-alt);
+    font-size: 11px;
+}
+
+/* A filter that is switched off is dimmed rather than hidden, so the count it is
+   hiding stays readable - that count is how you decide to switch it back on. */
+.chip--off {
+    opacity: 0.4;
+}
+
+.chip--empty {
+    opacity: 0.28;
+}
+
+.chip-swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+/* The one place an outcome's colour is written down. The lane marks read these
+   same variables back through ICustomStyle rather than keeping a second copy. */
+.chip-swatch--notcalled { background-color: var(--et-outcome-notcalled); }
+.chip-swatch--handleinvalid { background-color: var(--et-outcome-handleinvalid); }
+.chip-swatch--rejected { background-color: var(--et-outcome-rejected); }
+.chip-swatch--started { background-color: var(--et-outcome-started); }
+.chip-swatch--virtualized { background-color: var(--et-outcome-virtualized); }
+.chip-swatch--stolen { background-color: var(--et-outcome-stolen); }
+.chip-swatch--stoppedearly { background-color: var(--et-outcome-stoppedearly); }
+
+.chip-label {
+    font-size: 11px;
+}
+
+.chip-count {
+    font-size: 11px;
+    -unity-font-style: bold;
+    margin-left: 5px;
+}
+
+.summary-meta {
+    align-items: flex-end;
+}
+
+.summary-source {
+    font-size: 11px;
+    -unity-font-style: bold;
+}
+
+.summary-detail {
+    font-size: 11px;
+    color: var(--et-text-dim);
+}
+
+/* ---------------------------------------------------------- warning strip */
+
+.warning-strip {
+    display: none;
+}
+
+.warning-strip.visible {
+    display: flex;
+}
+
+.warning-line {
+    flex-direction: row;
+    align-items: center;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    background-color: var(--et-surface-alt);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--et-border);
+    font-size: 11px;
+    white-space: normal;
+    color: var(--et-outcome-virtualized);
+}
+
+/* ------------------------------------------------------------ empty state */
+
+.empty-state {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.empty-title {
+    -unity-font-style: bold;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.empty-body {
+    color: var(--et-text-dim);
+    white-space: normal;
+    -unity-text-align: middle-center;
+    max-width: 460px;
+}
+
+/* --------------------------------------------------------------- timeline */
+
+.timeline {
+    flex-grow: 1;
+}
+
+/* The gutter width is what keeps the ruler, the range row and every lane label
+   on the same vertical line. Change it in one place only. */
+.lane-gutter {
+    width: 240px;
+    flex-shrink: 0;
+    justify-content: center;
+    padding-left: 8px;
+}
+
+.range-row {
+    flex-direction: row;
+    align-items: center;
+    height: 22px;
+    background-color: var(--et-surface-alt);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--et-border);
+}
+
+.range-caption {
+    font-size: 11px;
+    color: var(--et-text-dim);
+}
+
+.range-controls {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.range-field {
+    width: 150px;
+    margin-right: 6px;
+    font-size: 11px;
+}
+
+.range-field > .unity-base-field__label {
+    min-width: 30px;
+    font-size: 11px;
+    color: var(--et-text-dim);
+}
+
+.range-fit {
+    height: 17px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 11px;
+}
+
+.ruler-row {
+    flex-direction: row;
+    height: 18px;
+    background-color: var(--et-surface);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--et-border);
+}
+
+.ruler {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.ruler-tick {
+    position: absolute;
+    top: 0;
+    height: 17px;
+    padding-left: 3px;
+    border-left-width: 1px;
+    border-left-color: var(--et-border);
+    font-size: 10px;
+    color: var(--et-text-dim);
+}
+
+/* ------------------------------------------------------------------ lanes */
+
+.lane-pane {
+    flex-grow: 1;
+}
+
+.lane-list {
+    flex-grow: 1;
+}
+
+.lane-row {
+    flex-direction: row;
+    align-items: stretch;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--et-border);
+}
+
+.lane-label {
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lane-summary {
+    font-size: 10px;
+    color: var(--et-text-dim);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lane-track {
+    flex-grow: 1;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-right: 6px;
+}
+
+/* ----------------------------------------------------------------- detail */
+
+.detail-pane {
+    background-color: var(--et-surface-alt);
+    border-left-width: 1px;
+    border-left-color: var(--et-border);
+}
+
+.detail-scroll {
+    flex-grow: 1;
+}
+
+.detail-placeholder {
+    color: var(--et-text-dim);
+    white-space: normal;
+    padding: 12px;
+}
+
+.detail-body {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 8px;
+    padding-bottom: 12px;
+}
+
+.detail-outcome {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.detail-outcome-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    margin-right: 6px;
+}
+
+.detail-outcome-label {
+    -unity-font-style: bold;
+    font-size: 13px;
+}
+
+.detail-event {
+    white-space: normal;
+    margin-bottom: 8px;
+    font-size: 11px;
+}
+
+.detail-meaning {
+    white-space: normal;
+    color: var(--et-text-dim);
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+
+.detail-section {
+    -unity-font-style: bold;
+    font-size: 11px;
+    margin-top: 8px;
+    margin-bottom: 3px;
+}
+
+.detail-field {
+    flex-direction: row;
+    margin-bottom: 1px;
+}
+
+.detail-field-name {
+    width: 96px;
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--et-text-dim);
+}
+
+.detail-field-value {
+    flex-grow: 1;
+    font-size: 11px;
+    white-space: normal;
+}
+
+.detail-link {
+    align-self: flex-start;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0;
+    background-color: rgba(0, 0, 0, 0);
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    color: var(--et-selection);
+    font-size: 11px;
+}
+
+.detail-link:hover {
+    -unity-font-style: bold;
+}
+
+.detail-note {
+    white-space: normal;
+    color: var(--et-text-dim);
+    font-size: 10px;
+    margin-top: 2px;
+}
+
+/* -------------------------------------------------------------- drop hint */
+
+.drop-hint {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+.drop-hint.visible {
+    display: flex;
+}
+
+.drop-hint-label {
+    -unity-font-style: bold;
+    font-size: 14px;
+    color: #ffffff;
+    padding: 14px;
+    border-width: 2px;
+    border-color: var(--et-selection);
+    border-radius: 6px;
+}

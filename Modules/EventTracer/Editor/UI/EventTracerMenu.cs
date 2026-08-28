@@ -13,11 +13,9 @@ namespace AudioToolbox.EventTracer.Editor
     /// Menu entry points for the tracer.
     /// </summary>
     /// <remarks>
-    /// The timeline window arrives in Phase 4; until then this keeps the whole pipeline
-    /// reachable and demonstrable — post some sounds, dump the session, read the seven
-    /// outcomes. Following the same shape as AudioDoctor's console-first menu, for the
-    /// same reason: a pipeline you cannot see the output of is a pipeline you cannot
-    /// tell is broken.
+    /// <see cref="EventTracerWindow"/> is where a session is read; the console dump here
+    /// stays because it is the form that survives being pasted into a bug report, a chat
+    /// message or a CI log, none of which can hold a window.
     /// </remarks>
     public static class EventTracerMenu
     {
