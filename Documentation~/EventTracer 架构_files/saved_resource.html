@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<!-- saved from url=(0253)https://e8291237-0078-4aa0-82c3-9430598d7c07.frame.claudeusercontent.com/_f/1787837937-0cfa/?__frame_t=xXFRn-zFBAmf8YUkj-DmM19T.b29d4b2b-0474-4d0b-a7ba-b393f4eb2fe8.4674e8bc-fd92-4a64-acf1-e284fbb7340a.1787841539&__frame_v=manifest.9898276473c7738d.json -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><!-- frame-runtime --><!--<base href="/_f/1787837937-0cfa/">--><base href="."><script>window.__FRAME_PREAMBLE={"v":1,"capabilities":{"artifact":"artifact.Cg566fpb.js","assets":"assets.8Gk803W0.js","comments":"comments.GLuHR3zP.js","db":"db.CRhVHzSt.js","downloads":"downloads.C3GSvEDP.js","embed":"embed.CxGAyc-v.js","mcp":"mcp.Bvma3qD7.js","network":"network.B5UA9Su4.js","permissions":"permissions.BNySkLV5.js","room":"room.BMMoe2BY.js","sample":"sample.BW2Uysoh.js","self":"artifact.Cg566fpb.js","user":"user.BpKav-Rf.js"},"transforms":"_transforms.CQm3TZ9K.js","comments":"_comments.PBVy184F.js","translate":"_translate.5HCW4BJh.js"}</script><script>(function(){"use strict";var J=["light","dark","system"],Q=/^[A-Za-z0-9_-]{1,64}$/,H=/^[a-zA-Z_:][a-zA-Z0-9_:.-]{0,127}$/,ee=new Set(["class","hidden","value","checked"]);function te(e){const t=e.toLowerCase();return t.startsWith("data-")||t.startsWith("aria-")||ee.has(t)}var Me="http://www.w3.org/1999/xhtml",re="http://www.w3.org/2000/svg",ne=new Set(["script","style","iframe","noscript","noframes","noembed","xmp","plaintext","template","title","textarea","object","embed"]),oe=new Set(["script","style"]);function se(e){const t=e.localName.toLowerCase();return e.namespaceURI==="http://www.w3.org/1999/xhtml"?!ne.has(t):e.namespaceURI===re?!oe.has(t):!1}var ae=new Set(["html","head","body","frameset"]);function ie(e){return e.namespaceURI==="http://www.w3.org/1999/xhtml"&&ae.has(e.localName)}function ce(e){if(e===null||typeof e!="object")return!1;const t=e;if(typeof t.target!="string"||!Q.test(t.target)||t.text!==void 0&&typeof t.text!="string")return!1;if(t.attrsSet!==void 0){if(t.attrsSet===null||typeof t.attrsSet!="object")return!1;for(const[r,n]of Object.entries(t.attrsSet))if(!H.test(r)||typeof n!="string")return!1}if(t.attrsRemoved!==void 0){if(!Array.isArray(t.attrsRemoved))return!1;for(const r of t.attrsRemoved)if(typeof r!="string"||!H.test(r))return!1}return!0}function le(e,t){if(e===null||typeof e!="object")return!1;const{seq:r,elements:n}=e;if(typeof r!="number"||!Number.isSafeInteger(r)||!Array.isArray(n)||n.length===0||n.length>64)return!1;for(let s=0;s<n.length;s++)if(!t(n[s]))return!1;return!0}function ue(e){return e===null||typeof e!="object"?!1:le(e.__frame_patch,ce)}function fe(e){if(e===null||typeof e!="object")return!1;const t=e.__frame_init;return t!==null&&typeof t=="object"}function pe(e){return e!==null&&typeof e=="object"&&e.__frame_size_poke===!0}function de(e){if(e===null||typeof e!="object")return!1;const t=e.__frame_theme;if(t===null||typeof t!="object")return!1;const r=t.theme;return typeof r=="string"&&J.includes(r)}var A=/^[\w.-]+\.js$/;function me(e,t,r){return r?"inert":typeof t=="string"&&A.test(t)?e?[t]:"inert":e?"inert":"framed"}function he(){return{post(e,t){parent.postMessage(e,t)},on(e){const t=r=>{r.source===parent&&e(r.data,r.origin)};return addEventListener("message",t),()=>removeEventListener("message",t)}}}function _e(){return{post:()=>{},on:()=>()=>{}}}var O="__frame_scroll",ve=150,ye=310,we=160,be=3e4;function Ee(){let e=0,t=!1,r=!1,n=!1,s=0,a=null;const l=i=>{try{sessionStorage.setItem(O,JSON.stringify({y:i}))}catch{}},d=()=>{if(clearTimeout(e),a===null)return;const i=a;a=null,l(i)},v=()=>{if(t){t=!1;return}r=!0,a=scrollY,clearTimeout(e),e=setTimeout(d,ve)};try{addEventListener("scroll",v,{passive:!0}),addEventListener("pagehide",d)}catch{}const y=()=>{let i;try{i=sessionStorage.getItem(O)}catch{return null}if(i===null)return null;let m;try{m=JSON.parse(i)}catch{m=null}const u=m?.y;if(!(typeof u=="number"&&Number.isFinite(u)&&u>=0)){try{sessionStorage.removeItem(O)}catch{}return null}return u};let S=!1;const h=i=>{try{const m=scrollY;scrollTo({top:i,left:0,behavior:"instant"}),s=i,n=!0,clearTimeout(e),a=null,l(i);const u=scrollY;u!==m&&(t=!0),u!==i&&!S&&(S=!0,addEventListener("load",()=>{try{if(scrollY===u){const k=y();h(k!==null?k:s)}}catch{}},{once:!0}))}catch{}},w=()=>{try{return!!location.hash}catch{return!0}};let o=!1;const f=()=>{try{if(o||innerWidth>ye||innerHeight>we)return;o=!0;const i=Date.now(),m=()=>{try{removeEventListener("resize",m)}catch{}if(Date.now()-i>be||r||w())return;const u=y();h(u!==null?u:s)};addEventListener("resize",m)}catch{}};let _=!1,b=!1;return{restore(){if(_||(_=!0,w()))return;const i=y();i!==null&&(h(i),f())},promoted(){if(b||(b=!0,w()))return;const i=y();i!==null?(h(i),f()):n&&h(s)}}}function ge(e,t,r,n){let s=null;try{s=window.trustedTypes?.createPolicy("frame-runtime",{createScriptURL:v=>v})??null}catch{}const a=window.Worker,l=a?.prototype,d=Object.freeze({Worker:a,workerOn:l?.addEventListener,workerPost:l?.postMessage,workerTerminate:l?.terminate,fetch:window.fetch.bind(window),preventDefault:Event.prototype.preventDefault,policy:s,origins:t});r(e).then(v=>v?.bootTopLevel?v.bootTopLevel(d,n):n.settle()).catch(()=>n.settle())}var Oe="modulepreload",Ce=function(e){return"/"+e},je={},Ae=function(t,r,n){let s=Promise.resolve();function a(l){const d=new Event("vite:preloadError",{cancelable:!0});if(d.payload=l,window.dispatchEvent(d),!d.defaultPrevented)throw l}return s.then(l=>{for(const d of l||[])d.status==="rejected"&&a(d.reason);return t().catch(a)})},Re=window===top,q=Object.getOwnPropertyDescriptor(window,"claude"),T=me(Re,window.__FRAME_PREAMBLE?.topLevel,q?.writable===!1),C=typeof T=="object"&&T[0],p=C?_e():he();(function(){const e=Object.defineProperty,t=globalThis,r=["RTCPeerConnection","webkitRTCPeerConnection","RTCDataChannel","RTCIceCandidate","RTCSessionDescription","RTCRtpSender","RTCRtpReceiver"];let n=0;for(let s=0;s<r.length;s++){const a=r[s];try{e(t,a,{value:void 0,writable:!1,configurable:!1})}catch{try{delete t[a]}catch{}try{e(t,a,{value:void 0,writable:!1,configurable:!0})}catch{}}typeof t[a]=="function"&&n++}if(n&&T==="framed")try{p.post({__frame_rtc_lockdown_failed:n},"*")}catch{}})();var Se=1e4,W=Object.freeze([...window.__FRAME_PREAMBLE?.origins??["https://claude.ai","https://preview.claude.ai"]]);function $(e){for(const t of W)if(t.endsWith(":*"))try{const r=new URL(e);if(`${r.protocol}//${r.hostname}:*`===t)return!0}catch{}else if(e===t)return!0;return!1}var L=Object.freeze({...window.__FRAME_PREAMBLE?.capabilities}),j=window.__FRAME_PREAMBLE?.transforms,N=window.__FRAME_PREAMBLE?.comments,I=window.__FRAME_PREAMBLE?.translate;function R(e){return Ae(()=>import("/_runtime/"+e),void 0)}function K(e,t){return{contract:e.contract,changes:new Set(e.changes??[]),flags:new Set(e.flags??[]),capabilities:e.capabilities??{},capBudgets:e.capBudgets??{},transforms:new Map,shellOrigin:t,mount:D,pipe:()=>({wrap:(r,n)=>(...s)=>{try{return n(...s)}catch(a){return Promise.reject(a)}}})}}var P=null,E=null;function Y(e,t,r){try{Object.defineProperty(e,t,{value:r,writable:!1,configurable:!1,enumerable:!0})}catch{try{Object.defineProperty(e,t,{value:r,writable:!1,configurable:!0,enumerable:!0})}catch{}}}var B=!1;function ke(e,t){const r=[];for(const n of e.elements){const s=document.querySelector(`[data-id="${n.target}"]`);if(!s){p.post({__frame_patch_miss:{seq:e.seq}},t);return}if([...Object.keys(n.attrsSet??{}),...n.attrsRemoved??[]].some(a=>!te(a))){p.post({__frame_patch_miss:{seq:e.seq}},t);return}if(n.text!==void 0&&(!se(s)||ie(s))){p.post({__frame_patch_miss:{seq:e.seq}},t);return}for(const[a,l]of Object.entries(n.attrsSet??{}))if(!G(s,a)){try{s.setAttribute(a,l)}catch{}X(s,a,l)}for(const a of n.attrsRemoved??[])G(s,a)||(s.removeAttribute(a),X(s,a,null));typeof n.text=="string"&&(s.textContent=n.text),r.push(n.target)}try{document.dispatchEvent(new CustomEvent("claude:edit",{detail:{seq:e.seq,targets:r}}))}catch{}}function X(e,t,r){if(!(e instanceof HTMLInputElement))return;const n=t.toLowerCase();n==="checked"?e.checked=r!==null:n==="value"&&e.type!=="file"&&(e.value=r??"")}function G(e,t){const r=t.toLowerCase(),n=e;return r==="data-id"||(r==="value"||r==="checked")&&(n.__artifactSecret===!0||/^(password|hidden|file)$/.test(n.type??"")||/(^|\s)(cc-|one-time-code|current-password|new-password)/i.test(`${e.getAttribute("autocomplete")??""} ${n.autocomplete??""}`))}function V(e){const t=document.documentElement;e==="light"||e==="dark"?(t.dataset.theme=e,t.style.colorScheme=e,B=!0):B&&(delete t.dataset.theme,t.style.colorScheme="",B=!1)}var M=new Map;function Te(){let e;const t={u:new Promise(r=>{e=r}),r:r=>{t.done=!0,e(r)},done:!1,nulled:!1};return t}function U(){for(const e of M.values())e.done||(e.nulled=!0,e.r(null))}var Le=Object.freeze(Object.assign(Object.create(null),{call:Function.prototype.call,apply:Function.prototype.apply,bind:Function.prototype.bind})),D=(e,t)=>{const r=M.get(e);if(!r||r.done){r?.nulled&&E&&p.post({__frame_cap_telemetry:{kind:"cap-load-error",cap:e}},E);return}const n=typeof t=="function"?Object.setPrototypeOf(t,Le):Object.assign(Object.create(null),t);typeof n.then=="function"&&delete n.then,r.r(Object.freeze(n))};function Z(){const e=q?.value??{};Y(window,"claude",e);for(const t of Object.keys(L)){if(e[t]!==void 0){Y(e,t,e[t]);continue}M.set(t,Te())}if(e.use===void 0){const t=r=>{if(typeof r!="string"||!Object.hasOwn(L,r))return Promise.resolve(null);const n=M.get(r);return n?n.u:Promise.resolve(e[r]??null)};try{Object.defineProperty(e,"use",{value:t,writable:!0,configurable:!0,enumerable:!1})}catch{}}}if(T==="framed"){const e=j&&A.test(j)?R(j).catch(()=>{}):Promise.resolve(void 0),t=o=>{if(o.type==="auxclick"&&o.button!==1)return;const f=o.target,_=f&&f.closest?f.closest("a[href],area[href]"):null;if(!_)return;const b=_.getAttribute("href");if(!b)return;let i;try{i=new URL(b,document.baseURI)}catch{return}if((i.protocol==="http:"||i.protocol==="https:")&&i.origin!==location.origin){o.preventDefault();const m=(_.getAttribute("target")??"").toLowerCase(),u=o.type==="auxclick"||o.metaKey||o.ctrlKey||o.shiftKey||o.altKey||!["","_self","_top","_parent"].includes(m);p.post({__frame_nav:!0,url:i.href,newTab:u},"*")}};addEventListener("click",t,!0),addEventListener("auxclick",t,!0);const r={},n=o=>{o.isTrusted&&(r.pointer=!0)},s=o=>{o.isTrusted&&(r.click=!0)};addEventListener("pointermove",n,{capture:!0,passive:!0}),addEventListener("click",s,{capture:!0,passive:!0}),e.then(o=>{o?.wireNav&&(o.wireNav(),removeEventListener("click",t,!0),removeEventListener("auxclick",t,!0),removeEventListener("pointermove",n,!0),removeEventListener("click",s,!0),o.wireEngagement?.(r))});let a=null;try{a=Ee()}catch{}Z();let l=null,d=null,v=0;const y=p.on((o,f)=>{$(f)&&fe(o)&&(l=o.__frame_init,E=f,y(),clearTimeout(v),d?.())});p.post({__frame_connect:!0},"*");const S=new Promise(o=>{d=o,v=setTimeout(()=>{y(),o()},Se)}),h=document.readyState==="loading"?new Promise(o=>document.addEventListener("DOMContentLoaded",()=>o(),{once:!0})):Promise.resolve();h.then(()=>{try{a?.restore()}catch{}});const w={cb:null};p.on((o,f)=>{if($(f)&&pe(o)){try{a?.promoted()}catch{}w.cb?.()}}),S.then(async()=>{if(!l||!E){U();return}V(l.theme);const o=E;let f=!1,_=!1;p.on((c,x)=>{if(x!==o)return;de(c)&&V(c.__frame_theme.theme),ue(c)&&ke(c.__frame_patch,o);const g=c?.__fc_mode;g&&typeof g=="object"&&!f&&N&&A.test(N)&&(f=!0,R(N).then(z=>z.install?.(o,g.on===!0)).catch(()=>{}));const F=c?.__ft_cmd;F&&typeof F=="object"&&!_&&I&&A.test(I)&&(_=!0,R(I).then(z=>z.install?.(o,F)).catch(()=>{}))});const b=Object.keys(l.capabilities??{}).filter(c=>Object.hasOwn(L,c)).map(c=>[c,L[c]]).filter(c=>typeof c[1]=="string"&&A.test(c[1])),i=await Promise.allSettled(b.map(([,c])=>R(c))),m=await e,u=E;if(m?.buildBoot||p.post({__frame_cap_telemetry:{kind:"cap-load-error",cap:"_transforms"}},u),m?.buildBoot)try{P=m.buildBoot(l,m.TRANSFORMS??{},{shellOrigin:u,mount:D},c=>p.post({__frame_cap_telemetry:c},u))}catch{p.post({__frame_cap_telemetry:{kind:"cap-load-error",cap:"_transforms"}},u),P=K(l,u)}else P=K(l,u);const k=c=>p.post({__frame_cap_telemetry:{kind:"cap-load-error",cap:c}},u),Pe=P;i.forEach((c,x)=>{const g=b[x][0];if(c.status!=="fulfilled"){k(g);return}try{c.value?.install?.(Pe)}catch{k(g)}}),U(),await h,p.post({__frame_ready:!0},E),e.then(c=>c?.installSizeReporter?.(u,w))})}else C&&(Z(),ge(C,W,R,{settle:U,mount:D}))})();</script><!-- /frame-runtime --><meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>EventTracer 架构</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link rel="stylesheet" href="./css2">
+
+<style>
+  :root {
+    --ground: #F5F6FA;
+    --surface: #FFFFFF;
+    --surface-2: #EDEFF6;
+    --ink: #15181F;
+    --ink-2: #3C4352;
+    --muted: #6B7385;
+    --rule: #DBDFE9;
+    --rule-soft: #E8EBF2;
+    --accent: #3B48A8;
+    --accent-soft: #E6E9F8;
+    --ok: #1E6E52;
+    --warn: #8B5C12;
+    --bad: #A5363F;
+    --off: #78808F;
+
+    --step--1: 0.8125rem;
+    --step-0: 1rem;
+    --step-1: 1.1875rem;
+    --step-2: 1.5rem;
+    --step-3: 2rem;
+    --step-4: 2.75rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0D1015;
+      --surface: #151922;
+      --surface-2: #1D2230;
+      --ink: #E6E9F0;
+      --ink-2: #BAC1CF;
+      --muted: #8B93A5;
+      --rule: #272D3B;
+      --rule-soft: #1F2431;
+      --accent: #96A0F4;
+      --accent-soft: #1D2240;
+      --ok: #4FB289;
+      --warn: #D5A04A;
+      --bad: #E37B85;
+      --off: #7F8798;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0D1015;
+    --surface: #151922;
+    --surface-2: #1D2230;
+    --ink: #E6E9F0;
+    --ink-2: #BAC1CF;
+    --muted: #8B93A5;
+    --rule: #272D3B;
+    --rule-soft: #1F2431;
+    --accent: #96A0F4;
+    --accent-soft: #1D2240;
+    --ok: #4FB289;
+    --warn: #D5A04A;
+    --bad: #E37B85;
+    --off: #7F8798;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Noto Serif SC", "Source Han Serif SC", Georgia, serif;
+    font-size: var(--step-0);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem 6rem;
+  }
+
+  .prose { max-width: 40rem; }
+
+  h1, h2, h3, .eyebrow, .label {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", "Source Han Sans SC", system-ui, sans-serif;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: var(--step-4);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+
+  h2 {
+    font-size: var(--step-2);
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  h3 {
+    font-size: var(--step-1);
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0 0 0.35rem;
+  }
+
+  p { margin: 0 0 1.1rem; }
+  p:last-child { margin-bottom: 0; }
+
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  code, .mono {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.86em;
+    font-weight: 400;
+  }
+
+  :not(pre) > code {
+    background: var(--surface-2);
+    border-radius: 3px;
+    padding: 0.1em 0.34em;
+    color: var(--ink-2);
+  }
+
+  a { color: var(--accent); }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .masthead .kicker {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .standfirst {
+    font-size: var(--step-1);
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 34rem;
+    margin: 0;
+  }
+
+  .badge {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 2px;
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* ---------- sections ---------- */
+
+  section {
+    padding-top: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  section + section { border-top: 1px solid var(--rule-soft); margin-top: 3.5rem; padding-top: 3.5rem; }
+
+  .section-head { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  /* ---------- phase strip ---------- */
+
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .phase {
+    background: var(--surface);
+    padding: 1.1rem 1.25rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .phase .n {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+
+  .phase .t {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 1.0625rem;
+  }
+
+  .phase .d { font-size: var(--step--1); color: var(--muted); line-height: 1.6; }
+
+  /* ---------- figure ---------- */
+
+  figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .figure-frame {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.25rem;
+    overflow-x: auto;
+  }
+
+  .figure-frame svg { display: block; max-width: 100%; height: auto; margin: 0 auto; min-width: 34rem; }
+
+  figcaption {
+    font-size: var(--step--1);
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 40rem;
+  }
+
+  /* ---------- outcomes table ---------- */
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 4px; background: var(--surface); }
+
+  table { border-collapse: collapse; width: 100%; min-width: 40rem; }
+
+  th, td {
+    text-align: left;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: baseline;
+  }
+
+  thead th {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom-color: var(--rule);
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  td.name { white-space: nowrap; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .dot-ok { background: var(--ok); }
+  .dot-warn { background: var(--warn); }
+  .dot-bad { background: var(--bad); }
+  .dot-off { background: var(--off); }
+
+  td.how { font-size: 0.9375rem; color: var(--ink-2); }
+  td.how .mono { color: var(--muted); }
+
+  /* ---------- assembly block ---------- */
+
+  .asm {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 1rem;
+  }
+
+  .asm-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.1rem 1.25rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .asm-card.gated {
+    border-style: dashed;
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .asm-card h3 { margin: 0; }
+
+  .asm-note { font-size: var(--step--1); color: var(--muted); line-height: 1.6; }
+  .asm-card.gated .asm-note { color: var(--accent); }
+
+  .asm-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+
+  .asm-list li {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8125rem;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+
+  .asm-list li span { color: var(--muted); font-family: "Noto Serif SC", Georgia, serif; font-size: 0.8125rem; }
+
+  /* ---------- decision list ---------- */
+
+  .decisions { display: flex; flex-direction: column; gap: 1.75rem; max-width: 44rem; }
+
+  .decision { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .decision .label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .decision p { margin: 0; color: var(--ink-2); }
+
+  /* ---------- status ---------- */
+
+  .status {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .stat { background: var(--surface); padding: 1rem 1.15rem 1.15rem; display: flex; flex-direction: column; gap: 0.15rem; }
+
+  .stat .v {
+    font-family: "IBM Plex Sans Condensed", "Noto Sans SC", system-ui, sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat .v.pass { color: var(--ok); }
+  .stat .k { font-size: var(--step--1); color: var(--muted); line-height: 1.5; }
+
+  .next { font-size: 0.9375rem; color: var(--muted); max-width: 40rem; }
+
+  .colophon {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule-soft);
+    font-size: var(--step--1);
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+  }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+
+  @media (max-width: 40rem) {
+    :root { --step-4: 2.1rem; --step-3: 1.6rem; --step-2: 1.3rem; }
+    .page { padding: 3rem 1.15rem 4rem; }
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="kicker">
+      <span class="eyebrow">AudioToolbox · 模块 A</span>
+      <span class="badge">Phase 0–2 · FMOD</span>
+    </div>
+    <h1>EventTracer 架构</h1>
+    <p class="standfirst">
+      把「这里没声音」拆成七种可区分的失败模式，并为每一次事件调用留下足以复现的现场记录。
+      本文是 Phase 0–2 交付内容的架构总结。
+    </p>
+  </header>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">起点</span>
+      <h2>问题</h2>
+    </div>
+    <div class="prose">
+      <p>
+        <code>PlayOneShot</code> 什么都不返回。一个因超出 max instance 被拒的实例、一个跑出衰减范围被虚拟化的实例、
+        一个被后来者抢走发声位的实例，和一个播得好好的实例，从调用点看完全一样：没有异常，没有日志，只有沉默。
+      </p>
+      <p>
+        EventTracer 的做法是让调用走统一门面，由门面持有实例的整个生命周期，从而把这四种（以及另外三种）情况区分开。
+        代价是要改调用点；收益是「没声音」从一个症状变成七个可验证的判断。
+      </p>
+    </div>
+
+    <div class="phases">
+      <div class="phase">
+        <span class="n">PHASE 0</span>
+        <span class="t">门面与记录模型</span>
+        <span class="d">统一入口、后端接口、<code>AudioTraceRecord</code>、Native 兜底后端。</span>
+      </div>
+      <div class="phase">
+        <span class="n">PHASE 1</span>
+        <span class="t">环形缓冲与落盘</span>
+        <span class="d">定容缓冲、字符串驻留表、后台写盘线程、<code>.adtrace</code> 格式。</span>
+      </div>
+      <div class="phase">
+        <span class="n">PHASE 2</span>
+        <span class="t">FMOD 结果归一化</span>
+        <span class="d">回调订阅、信号翻译、七种 Outcome 的判定与实测验证。</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">核心</span>
+      <h2>信号路径</h2>
+    </div>
+
+    <div class="prose">
+      <p>
+        整个模块的架构决定只有一条：<strong>判定谁来做</strong>。后端只把中间件的回调翻译成一组与中间件无关的信号，
+        判定「这串信号意味着被抢占还是被主动停掉」发生在 Core 的纯函数状态机里。
+        这样最容易出错的那部分代码，可以在一台没装任何中间件的机器上用表驱动测试跑完。
+      </p>
+    </div>
+
+    <figure>
+      <div class="figure-frame">
+        <svg viewBox="0 0 840 640" role="img" aria-label="信号路径图：游戏代码经 AudioTrace 门面把播放请求交给 FMOD 后端与 FMOD 引擎；引擎的回调在 FMOD 更新线程上被 FmodSignalMap 翻译成 ProbeSignal，压入跨线程的无锁信号队列；主线程每帧 Pump 取出，喂给 OutcomeStateMachine，判定结果回填到记录环形缓冲。门面的 Stop 调用另有一条虚线直接告知状态机，因为回调不携带这一位信息。">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
+            </marker>
+            <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)"></path>
+            </marker>
+          </defs>
+
+          <g fill="currentColor" font-family="&#39;IBM Plex Sans Condensed&#39;,&#39;Noto Sans SC&#39;,system-ui,sans-serif">
+
+            <!-- thread divider -->
+            <line x1="430" y1="42" x2="430" y2="612" stroke="currentColor" stroke-width="1" stroke-dasharray="3 5" opacity="0.35"></line>
+            <text x="235" y="30" text-anchor="middle" font-size="11" font-weight="600" letter-spacing="1.4" opacity="0.55">主 线 程</text>
+            <text x="635" y="30" text-anchor="middle" font-size="11" font-weight="600" letter-spacing="1.4" opacity="0.55">FMOD 更 新 线 程</text>
+
+            <!-- L1 game code -->
+            <rect x="90" y="56" width="290" height="44" rx="3" fill="none" stroke="currentColor" stroke-width="1.25" opacity="0.85"></rect>
+            <text x="235" y="83" text-anchor="middle" font-size="14" font-weight="600">游戏代码</text>
+
+            <!-- L2 facade -->
+            <rect x="90" y="132" width="290" height="58" rx="3" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"></rect>
+            <text x="235" y="157" text-anchor="middle" font-size="14" font-weight="700" fill="var(--accent)">AudioTrace 门面</text>
+            <text x="235" y="176" text-anchor="middle" font-size="11.5" fill="var(--accent)" opacity="0.85" font-family="&#39;JetBrains Mono&#39;,monospace">Post · Stop · SetParameter</text>
+
+            <!-- R1 backend -->
+            <rect x="490" y="132" width="290" height="58" rx="3" fill="none" stroke="currentColor" stroke-width="1.25" opacity="0.85"></rect>
+            <text x="635" y="157" text-anchor="middle" font-size="14" font-weight="600">FMOD 后端</text>
+            <text x="635" y="176" text-anchor="middle" font-size="11.5" opacity="0.6" font-family="&#39;JetBrains Mono&#39;,monospace">voiceId → userData</text>
+
+            <!-- R2 engine -->
+            <rect x="490" y="222" width="290" height="46" rx="3" fill="none" stroke="currentColor" stroke-width="1.25" opacity="0.85"></rect>
+            <text x="635" y="251" text-anchor="middle" font-size="14" font-weight="600">FMOD 引擎</text>
+
+            <!-- R3 signal map -->
+            <rect x="490" y="310" width="290" height="52" rx="3" fill="none" stroke="currentColor" stroke-width="1.25" opacity="0.85"></rect>
+            <text x="635" y="333" text-anchor="middle" font-size="14" font-weight="600">FmodSignalMap</text>
+            <text x="635" y="351" text-anchor="middle" font-size="11.5" opacity="0.6">只做翻译 · 不做判定</text>
+
+            <!-- queue, straddling the divider -->
+            <rect x="300" y="394" width="340" height="52" rx="3" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.25" opacity="0.9"></rect>
+            <text x="470" y="417" text-anchor="middle" font-size="14" font-weight="600">信号队列</text>
+            <text x="470" y="435" text-anchor="middle" font-size="11.5" opacity="0.65">无锁 · 多写单读</text>
+
+            <!-- L3 state machine -->
+            <rect x="90" y="480" width="290" height="58" rx="3" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"></rect>
+            <text x="235" y="505" text-anchor="middle" font-size="14" font-weight="700" fill="var(--accent)">OutcomeStateMachine</text>
+            <text x="235" y="524" text-anchor="middle" font-size="11.5" fill="var(--accent)" opacity="0.85">纯函数 · 不引用中间件</text>
+
+            <!-- L4 ring buffer -->
+            <rect x="90" y="570" width="290" height="46" rx="3" fill="none" stroke="currentColor" stroke-width="1.25" opacity="0.85"></rect>
+            <text x="235" y="592" text-anchor="middle" font-size="14" font-weight="600">记录环形缓冲</text>
+            <text x="235" y="608" text-anchor="middle" font-size="11" opacity="0.6">后台线程批量写 .adtrace</text>
+
+            <!-- arrows -->
+            <g stroke="currentColor" stroke-width="1.25" fill="none" marker-end="url(#ar)">
+              <line x1="235" y1="100" x2="235" y2="130"></line>
+              <line x1="380" y1="161" x2="488" y2="161"></line>
+              <line x1="635" y1="190" x2="635" y2="220"></line>
+              <line x1="635" y1="268" x2="635" y2="308"></line>
+              <line x1="635" y1="362" x2="635" y2="392"></line>
+              <line x1="340" y1="446" x2="340" y2="478"></line>
+              <line x1="235" y1="538" x2="235" y2="568"></line>
+            </g>
+
+            <!-- arrow labels -->
+            <g font-size="11.5" opacity="0.7">
+              <text x="247" y="120" font-family="&#39;JetBrains Mono&#39;,monospace">Post(key, emitter)</text>
+              <text x="434" y="153" text-anchor="middle">播放请求</text>
+              <text x="647" y="210" font-family="&#39;JetBrains Mono&#39;,monospace">createInstance · start</text>
+              <text x="623" y="292" text-anchor="end">回调 STARTED / STOPPED / …</text>
+              <text x="647" y="382" font-family="&#39;JetBrains Mono&#39;,monospace">ProbeSignal</text>
+              <text x="328" y="467" text-anchor="end">Pump · 每帧</text>
+              <text x="247" y="558">回填 Outcome</text>
+            </g>
+
+            <!-- StopRequested rail -->
+            <path d="M 90 161 L 52 161 L 52 509 L 86 509" stroke="var(--accent)" stroke-width="1.25" fill="none" stroke-dasharray="4 4" marker-end="url(#ar-a)"></path>
+            <g fill="var(--accent)" font-size="11.5">
+              <text x="64" y="286" font-weight="600">Stop() → StopRequested</text>
+              <text x="64" y="304" opacity="0.8">回调不携带的那一位</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>
+        中间件的回调只能说「停了」，说不出<em>是谁让它停的</em>。门面的 <code>Stop</code> 走那条虚线补上这一位，
+        <code>Stolen</code> 与 <code>StoppedEarly</code> 才分得开——这是「为什么要有门面」的主要理由。
+        记录在 <code>Post</code> 时就以临时结论写入缓冲，回调到达后按序号回填；若一个声音活得比缓冲还久，其结论会被计数上报，而不是静默丢弃。
+      </figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">词汇</span>
+      <h2>七种 Outcome</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">结果</th>
+            <th scope="col">含义</th>
+            <th scope="col">FMOD 侧判定</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name"><span class="chip"><span class="dot dot-bad"></span>HandleInvalid</span></td>
+            <td class="how">拿不到句柄：bank 未加载，或事件名拼错</td>
+            <td class="how"><span class="mono">RESULT != OK</span></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="chip"><span class="dot dot-bad"></span>Rejected</span></td>
+            <td class="how">实例建出来了，但没拿到发声位</td>
+            <td class="how"><span class="mono">CREATED</span> 后未见 <span class="mono">STARTED</span> 即 <span class="mono">DESTROYED</span></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="chip"><span class="dot dot-ok"></span>Started</span></td>
+            <td class="how">正常起播，或已播完</td>
+            <td class="how"><span class="mono">STARTED</span></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="chip"><span class="dot dot-warn"></span>Virtualized</span></td>
+            <td class="how">在播，但不出声：出了衰减范围、太安静、超发声数</td>
+            <td class="how"><span class="mono">REAL_TO_VIRTUAL</span></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="chip"><span class="dot dot-warn"></span>Stolen</span></td>
+            <td class="how">被引擎抢走发声位</td>
+            <td class="how">早于事件时长停止，且<strong>无人请求</strong></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="chip"><span class="dot dot-warn"></span>StoppedEarly</span></td>
+            <td class="how">被游戏逻辑提前停掉</td>
+            <td class="how">早于事件时长停止，且<strong>有人请求</strong></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="chip"><span class="dot dot-off"></span>NotCalled</span></td>
+            <td class="how">代码根本没跑到</td>
+            <td class="how">本模块不产生 —— 见下方边界</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose">
+      <p>
+        <code>Virtualized</code> 是黏性的：一个声音中途虚拟化过又恢复，记录仍保留这个结论，
+        因为「中间断了一下」正是有人在反馈的现象，改回 <code>Started</code> 会抹掉唯一的证据。
+        但若它随后被切断，切断的原因胜出——那才是最终沉默的解释。
+      </p>
+      <p>
+        距离在无位置可测时记 <code>-1</code> 而不是 <code>0</code>。零会被读成「就在听者头上」，是个看起来合理的错误答案。
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">边界</span>
+      <h2>程序集与编译开关</h2>
+    </div>
+
+    <div class="prose">
+      <p>
+        采集层随包进玩家端，所以它必须能被整体编译掉。
+        关掉 <code>AUDIOTOOLBOX_TRACE</code> 后，反射确认下列类型在程序集中<strong>完全不存在</strong>；
+        留下的是播放基础设施与纯数据类型。
+      </p>
+    </div>
+
+    <div class="asm">
+      <div class="asm-card">
+        <h3>常驻</h3>
+        <p class="asm-note">门面与播放所需。声音结束时发声位要回收、句柄要保持可安全持有，这些与是否记录无关。</p>
+        <ul class="asm-list">
+          <li>AudioTrace <span>门面</span></li>
+          <li>IAudioRuntimeProbe <span>后端接口</span></li>
+          <li>VoiceRegistry <span>发声位与代次</span></li>
+          <li>ProbeSignalQueue <span>跨线程队列</span></li>
+          <li>AudioTraceRecord · TraceFormat <span>纯数据</span></li>
+        </ul>
+      </div>
+      <div class="asm-card gated">
+        <h3>宏内 · 关闭即消失</h3>
+        <p class="asm-note">Runtime/Recording/ 整个目录。日志<em>读取器</em>住在 Editor 程序集且不受此宏约束——要看的日志来自别人的构建。</p>
+        <ul class="asm-list">
+          <li>OutcomeStateMachine</li>
+          <li>TraceRingBuffer</li>
+          <li>StringInternTable</li>
+          <li>TraceRecorder</li>
+          <li>TraceSessionWriter</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>
+        后端通过 <code>[RuntimeInitializeOnLoadMethod]</code> 自注册，Core 从不点名任何一个后端。
+        与模块 C 用 <code>TypeCache</code> 反射发现不同——那是编辑器侧，反射不要钱；
+        这里是运行时路径，启动时扫全部程序集在主机平台上是实打实的开销，且 IL2CPP 下还得手工保活。
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">取舍</span>
+      <h2>三个关键决定</h2>
+    </div>
+
+    <div class="decisions">
+      <div class="decision">
+        <span class="label">测试性</span>
+        <h3>判定不在后端里</h3>
+        <p>
+          回调时序是中间件文档与实际行为最容易分家的地方，也是本模块最可能写错的部分。
+          把它放进不依赖 Unity、不依赖中间件的纯函数里，EditMode 表驱动测试就能覆盖全部七种；
+          PlayMode 用真 FMOD 回答另一个问题：引擎<em>是否真的</em>发出那串信号。两个问题分开，红灯才有具体含义。
+        </p>
+      </div>
+      <div class="decision">
+        <span class="label">零 GC 的前提</span>
+        <h3>一切字符串都是 int</h3>
+        <p>
+          记录是 struct，存在一个定容数组里，事件名、调用点全部走驻留表存索引。
+          否则几万条记录会把托管堆拖成 GC 的遍历对象，日志体积也会失控。
+          调用点由 <code>[CallerFilePath]</code> 提供，是编译期常量；「文件:行号」按调用点缓存，每个调用点只拼一次字符串。
+        </p>
+      </div>
+      <div class="decision">
+        <span class="label">诚实</span>
+        <h3>丢了就说丢了</h3>
+        <p>
+          缓冲溢出、队列溢出、驻留表满、写盘失败，全部计数并写进会话头。
+          一个被截断却自称完整的会话，会让人得出「这个声音从没被调用过」的结论——那正是本模块要避免制造的错误。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">状态</span>
+      <h2>验证与下一步</h2>
+    </div>
+
+    <div class="status">
+      <div class="stat"><span class="v pass">63/63</span><span class="k">EditMode（开宏）</span></div>
+      <div class="stat"><span class="v pass">11/11</span><span class="k">EditMode（关宏）</span></div>
+      <div class="stat"><span class="v pass">12/12</span><span class="k">PlayMode + 真 FMOD</span></div>
+      <div class="stat"><span class="v pass">0 B</span><span class="k">2000 次调用的 GC 分配</span></div>
+      <div class="stat"><span class="v">7/7</span><span class="k">Outcome 实测可区分</span></div>
+    </div>
+
+    <div class="prose">
+      <p>
+        测试素材由 <code>Tools/TraceFixture~</code> 驱动 <code>fmodstudiocl</code> 全自动生成：
+        每个事件对应一种 Outcome 的构造条件，含程序生成的音频资源，可重复运行。
+      </p>
+      <p class="next">
+        <strong>本次未做：</strong>Phase 3 上下文采集（层级路径缓存、参数快照）、Phase 4 时间轴窗口、
+        Phase 5 Wwise 后端、Phase 6 盲区检测与排查手册。
+        <code>EmitterPathId</code> 与 <code>ParamSnapshotId</code> 字段已在记录里占位，目前恒为未设值。
+      </p>
+    </div>
+  </section>
+
+  <div class="colophon">
+    <span>Unity 6000.5.10f1</span>
+    <span>FMOD Studio 2.03.14</span>
+    <span>com.songyuan.audiotoolbox</span>
+  </div>
+
+</div>
+
+</body></html>

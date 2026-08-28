@@ -7,7 +7,7 @@ so the ones you do not use cost disk space and nothing else.
 
 ![diagnostics](Documentation~/diagnostics.png)
 
-![tracer](Documentation~\tracer.gif)
+![tracer](Documentation~/tracer.gif)
 
 ## Modules
 
